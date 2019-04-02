@@ -13,18 +13,28 @@ public class FaceLocalization {
         this.right_y = right_y;
     }
 
-    public float getWidth(int imageWidth) {
-        if (( this.left_x + this.getRight_x() - this.getLeft_x())> imageWidth){
-            return imageWidth - this.left_x;
+    public int getValidWidth(int imageWidth) {
+        int width = (int) (this.right_x - this.left_x);
+        if (( this.left_x + width) > imageWidth){
+            return (int) (imageWidth - this.left_x);
         }
-        return imageWidth;
+        return width;
     }
 
-    public float getHeight(int imageHeight){
-        if (( this.left_y + this.getRight_y() - this.getLeft_y())> imageHeight){
-            return imageHeight - this.left_y;
+    public int getValidHeight(int imageHeight){
+        int height = (int) (this.right_y - this.left_y);
+        if (( this.left_y + height)> imageHeight){
+            return (int) (imageHeight - this.left_y);
         }
-        return imageHeight;
+        return height;
+    }
+
+    public int getWidth() {
+        return (int) (this.right_x - this.left_x);
+    }
+
+    public int getHeight(){
+        return (int) (this.right_y - this.left_y);
     }
 
     public float getLeft_x(){

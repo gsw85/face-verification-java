@@ -56,30 +56,9 @@ public class CustomVGG16FaceIdentifier extends FaceIdentifier {
 
             int X = (int) faceLocalizations.get(i).getLeft_x();
             int Y = (int) faceLocalizations.get(i).getLeft_y();
-//            int Width = (int) faceLocalizations.get(i).getWidth(image.size().width()) -1;
-//            int Height = (int) faceLocalizations.get(i).getHeight(image.size().height()) -1;
-            int Width = (int) (faceLocalizations.get(i).getRight_x() - faceLocalizations.get(i).getLeft_x());
-            int Height = (int) (faceLocalizations.get(i).getRight_y() - faceLocalizations.get(i).getLeft_y());
+            int Width = (int) faceLocalizations.get(i).getValidWidth(image.size().width());
+            int Height = (int) faceLocalizations.get(i).getValidHeight(image.size().height());
 
-            if (X < 0){
-                X = 0;
-            }
-
-            if (Y < 0){
-                Y = 0;
-            }
-
-            if (( Y + Height)> image.size().height()){
-                Height = image.size().height() - Y;
-            }
-            if (( X + Width)> image.size().width()){
-                Width = image.size().width() - X;
-            }
-
-            log.info(String.valueOf(X));
-            log.info(String.valueOf(Y));
-            log.info(String.valueOf(Width));
-            log.info(String.valueOf(Height));
             opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
             resize(crop_image, crop_image, new opencv_core.Size(244, 244));
             INDArray _image = nativeImageLoader.asMatrix(crop_image);
