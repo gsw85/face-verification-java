@@ -3,11 +3,8 @@ package com.skymindglobal.face.detection;
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_dnn;
-import org.bytedeco.javacv.Java2DFrameUtils;
 import org.nd4j.linalg.io.ClassPathResource;
 
-import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +56,14 @@ public class OpenCVDeepLearningFaceDetector extends FaceDetector {
         model.setInput(blob);
         // feed forward the input to the netwrok to get the output matrix
         opencv_core.Mat output = model.forward();
+        return MatToFaceLocalization(ori_height, ori_width , output);
+    }
+
+    private List<FaceLocalization> MatToFaceLocalization(int ori_height, int ori_width, opencv_core.Mat output) {
         // extract a 2d matrix for 4d output matrix with form of (number of detections x 7)
         opencv_core.Mat ne = new opencv_core.Mat(new opencv_core.Size(output.size(3), output.size(2)), CV_32F, output.ptr(0, 0));
         // create indexer to access elements of the matric
         FloatIndexer srcIndexer = ne.createIndexer();
-
         List<FaceLocalization> faceLocalizations = new ArrayList();
         for (int i = 0; i < output.size(3); i++) {//iterate to extract elements
             float confidence = srcIndexer.get(i, 2);

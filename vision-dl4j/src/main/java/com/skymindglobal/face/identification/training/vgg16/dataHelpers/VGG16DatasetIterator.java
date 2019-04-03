@@ -8,56 +8,49 @@ import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.nd4j.linalg.dataset.DataSet;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-public class VGG16DatasetIterator extends RecordReaderDataSetIterator {
+public class VGG16DatasetIterator {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(VGG16DatasetIterator.class);
-
     private static final String[] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
     private static final Random rng  = new Random(13);
-
     private static final int height = 224;
     private static final int width = 224;
     private static final int channels = 3;
-    private static final int numClasses = 3;
+    private static final int numClasses = 45;
 
     private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
-    private static InputSplit trainData,testData;
-    private static int batchSize;
+    private static File trainSource,testSource;
+    private static int trainBatchSize;
+    private static int testBatchSize;
 
-    public VGG16DatasetIterator(RecordReader recordReader, int batchSize) {
-        super(recordReader, batchSize);
+    public VGG16DatasetIterator(File train, File test, int trainBatchSize, int testBatchSize) {
+        this.trainSource=train;
+        this.testSource=test;
+        this.trainBatchSize = trainBatchSize;
+        this.testBatchSize = testBatchSize;
     }
 
     public static RecordReaderDataSetIterator trainIterator() throws IOException {
-        return makeIterator(trainData, batchSize);
+        return makeIterator(trainSource, trainBatchSize);
     }
 
     public static RecordReaderDataSetIterator testIterator() throws IOException {
-        return makeIterator(testData, 1);
+        return makeIterator(testSource, testBatchSize);
     }
 
-    public static void setup(File parentDir, int batchSizeArg, int trainPerc) throws IOException {
-
-        batchSize = batchSizeArg;
-        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, rng);
-        BalancedPathFilter pathFilter = new BalancedPathFilter(rng, allowedExtensions, labelMaker);
-        if (trainPerc >= 100) {
-            throw new IllegalArgumentException("Percentage of data set aside for training has to be less than 100%. Test percentage = 100 - training percentage, has to be greater than 0");
-        }
-        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, trainPerc, 100-trainPerc);
-        trainData = filesInDirSplit[0];
-        testData = filesInDirSplit[1];
-    }
-
-    private static RecordReaderDataSetIterator makeIterator(InputSplit split, int batchSize) throws IOException {
+    private static RecordReaderDataSetIterator makeIterator(File file, int batchSize) throws IOException {
         ImageRecordReader recordReader = new ImageRecordReader(height, width, channels, labelMaker);
-        recordReader.initialize(split);
-        RecordReaderDataSetIterator iter = new RecordReaderDataSetIterator(recordReader, batchSize, 1, numClasses);
-        return iter;
+        recordReader.initialize(new FileSplit(file));
+        return new RecordReaderDataSetIterator(recordReader, batchSize, 1, file.listFiles().length);
+    }
+
+    public int getNumClass() {
+        return trainSource.listFiles().length;
     }
 }

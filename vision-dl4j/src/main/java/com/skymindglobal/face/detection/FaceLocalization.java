@@ -15,7 +15,7 @@ public class FaceLocalization {
 
     public int getValidWidth(int imageWidth) {
         int width = (int) (this.right_x - this.left_x);
-        if (( this.left_x + width) > imageWidth){
+        if (( this.left_x + width) >= imageWidth){
             return (int) (imageWidth - this.left_x);
         }
         return width;
@@ -23,7 +23,7 @@ public class FaceLocalization {
 
     public int getValidHeight(int imageHeight){
         int height = (int) (this.right_y - this.left_y);
-        if (( this.left_y + height)> imageHeight){
+        if (( this.left_y + height)>= imageHeight){
             return (int) (imageHeight - this.left_y);
         }
         return height;

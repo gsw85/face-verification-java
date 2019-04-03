@@ -2,24 +2,40 @@ package com.skymindglobal.face.identification.training.vgg16.dataHelpers;
 
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCVDeepLearningFaceDetector;
+import org.apache.commons.io.FileUtils;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Java2DFrameUtils;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
+import static org.bytedeco.javacpp.opencv_imgproc.logPolar;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class VGG16DatasetPreperation {
 
-    private static String imageSource = "D:\\Public_Data\\face_recog_lfw50\\lfw50";
-    private static String imageFace = "D:\\Public_Data\\face_recog_lfw50\\lfw50_faces";
+    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\lfw_custom_train";
+    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\lfw_custom_test";
+
+    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\lfw_custom_train_cropped";
+    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\lfw_custom_test_cropped";
+
+    private static String lfwSource = "D:\\Public_Data\\lfw\\lfw";
+
+    private static int trainPerc = 50;
+    private static int numClass = 50;
+    private static int minSamples = 20;
+    private static int maxSamples = 30;
+    private static int OUTPUT_IMAGE_WIDTH = 224;
+    private static int OUTPUT_IMAGE_HEIGHT = 224;
+    private static int OPENCV_DL_FACEDETECTOR_WIDTH = 300;
+    private static int OPENCV_DL_FACEDETECTOR_HEIGHT = 300;
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(VGG16DatasetPreperation.class);
 
     public static void main(String[] args) throws IOException {
         /**
@@ -28,45 +44,86 @@ public class VGG16DatasetPreperation {
          * Resize image to 244: vgg16 input
          *
          **/
-        cropFaces();
+        dataSampling(minSamples, maxSamples);
+        cropFaces(imageSourceTrain, imageSourceTrainCropped);
+        cropFaces(imageSourceTest, imageSourceTestCropped);
+
     }
 
-    private static void cropFaces() throws IOException {
-        File imageSourceDir = new File(imageSource);
-        listFilesForFolder(imageSourceDir);
+    private static void dataSampling(int minSamples, int maxSamples) {
+        File lfwSourceDir = new File(lfwSource);
+        int i=0;
+        for (final File fileEntry : lfwSourceDir.listFiles()) {
+            if (fileEntry.isDirectory()){
+                if(fileEntry.listFiles().length>=minSamples && fileEntry.listFiles().length<=maxSamples) {
+                    try {
+                        randomAssignImages(fileEntry);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    i++;
+                }
+            }
+            if(i>=numClass){
+                break;
+            }
+        }
     }
 
-    public static void listFilesForFolder(final File folder) throws IOException {
+    private static void randomAssignImages(File fileEntry) throws IOException {
+        for (File i: fileEntry.listFiles()){
+            Random rand = new Random();
+            int n = rand.nextInt(100);
+            if (n > trainPerc) {
+                FileUtils.copyFile(i, new File(imageSourceTest + "\\" + fileEntry.getName() + "\\" + i.getName()));
+            } else {
+                FileUtils.copyFile(i, new File(imageSourceTrain + "\\" + fileEntry.getName() + "\\" + i.getName()));
+            }
+        }
+    }
+
+    private static void cropFaces(String source, String destination) throws IOException {
+        File imageSourceDir = new File(source);
+        listFilesForFolder(imageSourceDir, destination);
+    }
+
+    public static void listFilesForFolder(final File folder, String imageSourceCropped) throws IOException {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
-                listFilesForFolder(fileEntry);
+                listFilesForFolder(fileEntry, imageSourceCropped);
             } else {
-                String target = imageFace + "\\" + folder.getName() + '\\' + fileEntry.getName();
+                String target = imageSourceCropped + "\\" + folder.getName() + '\\' + fileEntry.getName();
                 detectFacesAndSave(fileEntry.getAbsolutePath(), target);
             }
         }
     }
 
     public static void detectFacesAndSave(String source, String target) throws IOException {
-        System.out.println(source + "-->" + target);
+//        System.out.println(source + " --> " + target);
         OpenCVDeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCVDeepLearningFaceDetector(300, 300, 0.6);
         opencv_core.Mat image = imread(source);
 
-        resize(image, image, new opencv_core.Size(300, 300));
+        resize(image, image, new opencv_core.Size(OPENCV_DL_FACEDETECTOR_WIDTH, OPENCV_DL_FACEDETECTOR_HEIGHT));
         List<FaceLocalization> faceLocalizations = _OpenCVDeepLearningFaceDetector.detectFaces(image);
 
         for (FaceLocalization i : faceLocalizations) {
             int X = (int) i.getLeft_x();
             int Y = (int) i.getLeft_y();
-            int Width = (int) i.getValidWidth(300);
-            int Height = (int) i.getValidHeight(300);
+            int Width = i.getValidWidth(OPENCV_DL_FACEDETECTOR_WIDTH);
+            int Height = i.getValidHeight(OPENCV_DL_FACEDETECTOR_HEIGHT);
 
-            opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
-            resize(crop_image, crop_image, new opencv_core.Size(244, 244));
-            File targetFile = new File(target);
-            targetFile.getParentFile().mkdirs();
-            ImageIO.write(Java2DFrameUtils.toBufferedImage(crop_image), "jpg", targetFile);
-
+            log.info(X+", "+ Y+", "+Width+", "+Height);
+            if(Width>0 && Height>0){
+                opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
+                resize(crop_image, crop_image, new opencv_core.Size(OUTPUT_IMAGE_WIDTH, OUTPUT_IMAGE_HEIGHT));
+                File targetFile = new File(target);
+                targetFile.getParentFile().mkdirs();
+                ImageIO.write(Java2DFrameUtils.toBufferedImage(crop_image), "jpg", targetFile);
+            }
+            else
+            {
+                log.info("Skipping: "+source);
+            }
         };
     }
 }
