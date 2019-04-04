@@ -14,6 +14,15 @@ public class Prediction {
         this.faceLocalization = faceLocalization;
     }
 
+    public Prediction(String label, double percentage) {
+        this.label = label;
+        this.percentage = percentage;
+    }
+
+    public String getLabel(){
+        return this.label;
+    }
+
     public FaceLocalization getFaceLocalization(){
         return this.faceLocalization;
     }

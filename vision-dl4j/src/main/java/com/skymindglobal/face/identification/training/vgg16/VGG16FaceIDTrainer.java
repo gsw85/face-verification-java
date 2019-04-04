@@ -38,15 +38,15 @@ import java.util.List;
 public class VGG16FaceIDTrainer {
     private static final Logger log = LoggerFactory.getLogger(VGG16FaceIDTrainer.class);
     // parameters for the training phase
-    private static int trainBatchSize = 16;
+    private static int trainBatchSize = 32;
     private static int nEpochs = 40;
-    private static double learningRate = 3e-3;
+    private static double learningRate = 1e-2;
     private static int nClasses = 0;
     private static List<String> labels;
     private static int seed = 123;
     private static int saveModelEpochInterval = 1;
     private static boolean TRAINING_MODE = true;
-    private static String unique_id = "vgg16_faceid_v3";
+    private static String unique_id = "vgg16_faceid_v4";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".zip";
     private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".lbl";
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
