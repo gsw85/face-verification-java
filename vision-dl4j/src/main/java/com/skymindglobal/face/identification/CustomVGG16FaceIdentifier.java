@@ -1,6 +1,7 @@
 package com.skymindglobal.face.identification;
 
 import com.skymindglobal.face.detection.FaceLocalization;
+import com.skymindglobal.face.toolkit.LabelManager;
 import org.bytedeco.javacpp.opencv_core;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -33,7 +34,7 @@ public class CustomVGG16FaceIdentifier extends FaceIdentifier {
 
     public CustomVGG16FaceIdentifier(int numPrediction) throws IOException, ClassNotFoundException {
         this.numPrediction = numPrediction;
-        this.labels = getLabels(labelFilename);
+        this.labels = LabelManager.importLabels(labelFilename);
         if (new File(modelFilename).exists()) {
             log.info("Load model...");
             try {
@@ -44,13 +45,6 @@ public class CustomVGG16FaceIdentifier extends FaceIdentifier {
         } else {
             log.info("Model not found.");
         }
-    }
-
-    private String[] getLabels(String labelFilename) throws IOException, ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(labelFilename));
-        List<String> array = (List<String>) in.readObject();
-        in.close();
-        return array.toArray(new String[0]);
     }
 
     @Override

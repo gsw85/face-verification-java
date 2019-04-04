@@ -17,12 +17,9 @@ import java.util.Random;
 
 public class VGG16DatasetIterator {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(VGG16DatasetIterator.class);
-    private static final String[] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
-    private static final Random rng  = new Random(13);
     private static final int height = 224;
     private static final int width = 224;
     private static final int channels = 3;
-    private static final int numClasses = 45;
 
     private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
     private static File trainSource,testSource;
@@ -30,8 +27,8 @@ public class VGG16DatasetIterator {
     private static int testBatchSize;
 
     public VGG16DatasetIterator(File train, File test, int trainBatchSize, int testBatchSize) {
-        this.trainSource=train;
-        this.testSource=test;
+        this.trainSource = train;
+        this.testSource = test;
         this.trainBatchSize = trainBatchSize;
         this.testBatchSize = testBatchSize;
     }
