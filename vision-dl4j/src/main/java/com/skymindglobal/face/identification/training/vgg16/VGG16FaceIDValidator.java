@@ -50,7 +50,7 @@ public class VGG16FaceIDValidator {
     private static final String EXPORT_CSV = "EXPORT_CSV";
     private static final String TRAINING_UI = "TRAINING_UI";
 
-    private static String unique_id = "vgg16_faceid_v10";
+    private static String unique_id = "vgg16_faceid_v13";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".zip";
     private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".lbl";
     private static String csvFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".csv";

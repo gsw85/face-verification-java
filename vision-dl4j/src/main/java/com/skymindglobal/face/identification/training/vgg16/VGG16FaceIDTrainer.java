@@ -40,13 +40,13 @@ public class VGG16FaceIDTrainer {
     // parameters for the training phase
     private static int trainBatchSize = 64;
     private static int nEpochs = 40;
-    private static double learningRate = 1e-2;
+    private static double learningRate = 1e-3;
     private static int nClasses = 0;
     private static List<String> labels;
     private static int seed = 123;
     private static int saveModelEpochInterval = 1;
     private static boolean TRAINING_MODE = true;
-    private static String unique_id = "vgg16_faceid_v11";
+    private static String unique_id = "vgg16_faceid_v13";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".zip";
     private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".lbl";
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
@@ -67,6 +67,9 @@ public class VGG16FaceIDTrainer {
         RecordReaderDataSetIterator trainIter = _VGG16DatasetIterator.trainIterator();
         trainIter.setPreProcessor( new VGG16ImagePreProcessor());
 
+        RecordReaderDataSetIterator testIter = _VGG16DatasetIterator.testIterator();
+        testIter.setPreProcessor( new VGG16ImagePreProcessor());
+
         // Print Labels
         labels = trainIter.getLabels();
         LabelManager.exportLabels(labelFilename, labels);
@@ -76,7 +79,7 @@ public class VGG16FaceIDTrainer {
             log.info("Load model...");
             model = ModelSerializer.restoreComputationGraph(modelFilename, true);
             log.info("Continue Training...");
-            trainModel(trainIter, model);
+            trainModel(trainIter,testIter, model);
         }
         else if(new File(modelFilename).exists()){
             log.info("Load model...");
@@ -90,11 +93,11 @@ public class VGG16FaceIDTrainer {
             FineTuneConfiguration fineTuneConf = getFineTuneConfiguration();
             // Transfer Learning steps - Modify prebuilt model's architecture for current scenario
             model = buildComputationGraph(pretrained, fineTuneConf);
-            trainModel(trainIter, model);
+            trainModel(trainIter,testIter, model);
         }
     }
 
-    private static void trainModel(RecordReaderDataSetIterator trainIter, ComputationGraph model) throws IOException {
+    private static void trainModel(RecordReaderDataSetIterator trainIter,RecordReaderDataSetIterator testIter, ComputationGraph model) throws IOException {
         log.info("Train model...");
         UIServer server = UIServer.getInstance();
         StatsStorage storage = new FileStatsStorage(
@@ -117,6 +120,9 @@ public class VGG16FaceIDTrainer {
                 ModelSerializer.writeModel(model, modelFilename, true);
                 log.info("Checkpoint: Model saved!");
             }
+            log.info(model.evaluate(trainIter).stats(true, false) + "\n");
+            log.info(model.evaluate(testIter).stats(true, false) + "\n");
+
         }
     }
 
