@@ -6,6 +6,7 @@ import com.skymindglobal.face.toolkit.CSVUtils;
 import com.skymindglobal.face.toolkit.LabelManager;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.GradientNormalization;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
@@ -21,7 +22,6 @@ import org.deeplearning4j.ui.storage.FileStatsStorage;
 import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.model.VGG16;
-import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
@@ -46,15 +46,18 @@ import static org.jcodec.common.Assert.assertTrue;
 
 public class VGG16FaceIDValidator {
     private static final Logger log = LoggerFactory.getLogger(VGG16FaceIDValidator.class);
+    private static final String EVALUATE = "EVALUATE";
+    private static final String EXPORT_CSV = "EXPORT_CSV";
+    private static final String TRAINING_UI = "TRAINING_UI";
 
-    private static String unique_id = "vgg16_faceid_v4";
+    private static String unique_id = "vgg16_faceid_v10";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".zip";
     private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".lbl";
     private static String csvFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".csv";
-//    private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
+    private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
     private static ComputationGraph model;
     private static String[] labels;
-    private static List<String[]> dataLines;
+    private static String mode = VGG16FaceIDValidator.EVALUATE;
 
     public static void main(String[] args) throws Exception {
         
@@ -62,9 +65,13 @@ public class VGG16FaceIDValidator {
         VGG16DatasetIterator _VGG16DatasetIterator = new VGG16DatasetIterator(
                 new File("D:\\Public_Data\\face_recog\\lfw_custom_train_cropped"),
                 new File("D:\\Public_Data\\face_recog\\lfw_custom_test_cropped"),
-                0,
+                1,
                 1 // get all samples
         );
+
+        RecordReaderDataSetIterator trainIter = _VGG16DatasetIterator.trainIterator();
+        trainIter.setPreProcessor( new VGG16ImagePreProcessor());
+
         RecordReaderDataSetIterator testIter = _VGG16DatasetIterator.testIterator();
         testIter.setPreProcessor( new VGG16ImagePreProcessor());
 
@@ -74,9 +81,26 @@ public class VGG16FaceIDValidator {
             model = ModelSerializer.restoreComputationGraph(modelFilename);
         }
 
-//        displayEach(testIter, model);
+        switch (mode){
+            case VGG16FaceIDValidator.EXPORT_CSV:
+                writeCSV(csvFilename, testIter);
+                break;
+            case VGG16FaceIDValidator.TRAINING_UI:
+                UIServer server = UIServer.getInstance();
+                StatsStorage storage = new FileStatsStorage(
+                        new File(trainingUIStoragePath)
+                );
+                server.attach(storage);
+                break;
+            case VGG16FaceIDValidator.EVALUATE:
+                log.info(model.evaluate(trainIter).stats(true, true) + "\n");
+                log.info(model.evaluate(testIter).stats(true, true) + "\n");
+                break;
+            default:
+                break;
+        }
 
-        writeCSV(csvFilename, testIter);
+//        displayEach(testIter, model);
 //        Evaluation eval = new Evaluation(labels.length);
 //        DataSet data = testIter.next();
 //        INDArray[] output = model.output(data.getFeatures());
