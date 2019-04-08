@@ -46,7 +46,7 @@ public class VGG16FaceIDTrainer {
     private static int seed = 123;
     private static int saveModelEpochInterval = 1;
     private static boolean TRAINING_MODE = true;
-    private static String unique_id = "vgg16_faceid_v13";
+    private static String unique_id = "vgg16_faceid_v14";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".zip";
     private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".lbl";
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
@@ -154,7 +154,7 @@ public class VGG16FaceIDTrainer {
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .gradientNormalizationThreshold(1.0)
                 .updater(new Nesterovs.Builder().learningRate(learningRate).momentum(Nesterovs.DEFAULT_NESTEROV_MOMENTUM).build())
-                .l2(0.00001)
+                .l2(0.001)
                 .activation(Activation.IDENTITY)
                 .build();
 
