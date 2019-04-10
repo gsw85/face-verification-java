@@ -76,7 +76,7 @@ public class VGG16FaceIDTrainer {
         System.out.println(Arrays.toString(labels.toArray()));
 
         if (new File(modelFilename).exists() && TRAINING_MODE) {
-            log.info("Load model...");
+            log.info("Loading model from "+ modelFilename);
             model = ModelSerializer.restoreComputationGraph(modelFilename, true);
             log.info("Continue Training...");
             trainModel(trainIter,testIter, model);

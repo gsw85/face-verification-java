@@ -1,4 +1,4 @@
-package com.skymindglobal.face.identification.training.vgg16.dataHelpers;
+package com.skymindglobal.face.identification.training.facenet.dataHelpers;
 
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCVDeepLearningFaceDetector;
@@ -14,70 +14,21 @@ import java.util.List;
 import java.util.Random;
 
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.logPolar;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
-public class VGG16DatasetPreperation {
+public class LFWFacesPreperation {
     private static String lfwSource = "D:\\Public_Data\\lfw\\lfw";
 
-    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\lfw_custom_train";
-    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\lfw_custom_test";
-    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\lfw_custom_train_cropped";
-    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\lfw_custom_test_cropped";
+    private static String imageSourceTrainCropped = "D:\\Public_Data\\lfw\\lfw_opencv_face";;
 
-    private static int trainPerc = 50;
-    private static int numClass = 50;
-    private static int minSamples = 20;
-    private static int maxSamples = 30;
-    private static int OUTPUT_IMAGE_WIDTH = 224;
-    private static int OUTPUT_IMAGE_HEIGHT = 224;
+    private static int OUTPUT_IMAGE_WIDTH = 96;
+    private static int OUTPUT_IMAGE_HEIGHT = 96;
     private static int OPENCV_DL_FACEDETECTOR_WIDTH = 300;
     private static int OPENCV_DL_FACEDETECTOR_HEIGHT = 300;
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(VGG16DatasetPreperation.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(LFWFacesPreperation.class);
 
     public static void main(String[] args) throws IOException {
-        /**
-         * Random sample 50 classes from lfw: D:\Public_Data\lfw\lfw => D:\Public_Data\face_recog_lfw50\lfw50
-         * Detect and crop faces
-         * Resize image to 244: vgg16 input
-         *
-         **/
-        dataSampling(minSamples, maxSamples);
-        cropFaces(imageSourceTrain, imageSourceTrainCropped);
-        cropFaces(imageSourceTest, imageSourceTestCropped);
-
-    }
-
-    private static void dataSampling(int minSamples, int maxSamples) {
-        File lfwSourceDir = new File(lfwSource);
-        int i=0;
-        for (final File fileEntry : lfwSourceDir.listFiles()) {
-            if (fileEntry.isDirectory()){
-                if(fileEntry.listFiles().length>=minSamples && fileEntry.listFiles().length<=maxSamples) {
-                    try {
-                        randomAssignImages(fileEntry);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    i++;
-                }
-            }
-            if(i>=numClass){
-                break;
-            }
-        }
-    }
-
-    private static void randomAssignImages(File fileEntry) throws IOException {
-        for (File i: fileEntry.listFiles()){
-            Random rand = new Random();
-            int n = rand.nextInt(100);
-            if (n > trainPerc) {
-                FileUtils.copyFile(i, new File(imageSourceTest + "\\" + fileEntry.getName() + "\\" + i.getName()));
-            } else {
-                FileUtils.copyFile(i, new File(imageSourceTrain + "\\" + fileEntry.getName() + "\\" + i.getName()));
-            }
-        }
+        cropFaces(lfwSource, imageSourceTrainCropped);
     }
 
     private static void cropFaces(String source, String destination) throws IOException {
@@ -97,7 +48,6 @@ public class VGG16DatasetPreperation {
     }
 
     public static void detectFacesAndSave(String source, String target) throws IOException {
-//        System.out.println(source + " --> " + target);
         OpenCVDeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCVDeepLearningFaceDetector(300, 300, 0.6);
         opencv_core.Mat image = imread(source);
 

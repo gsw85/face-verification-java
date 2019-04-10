@@ -5,6 +5,7 @@ import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCVDeepLearningFaceDetector;
 import com.skymindglobal.face.identification.CustomVGG16FaceIdentifier;
 import com.skymindglobal.face.identification.FaceIdentifier;
+import com.skymindglobal.face.identification.FaceNetNN4Small2FaceIdentifier;
 import com.skymindglobal.face.identification.Prediction;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -19,6 +20,7 @@ import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.CUSTOM_VGG16);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.FACENETNN4SMALL2);
 
         VideoCapture capture = new VideoCapture();
         capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);
@@ -99,6 +101,9 @@ public class FaceID {
         switch (faceIdentifier){
             case FaceIdentifier.CUSTOM_VGG16:
                 return new CustomVGG16FaceIdentifier(3);
+            case FaceIdentifier.FACENETNN4SMALL2:
+//                return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\lfw_custom_train_cropped"));
+                return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\office_faces_cropped"));
             default:
                 return null;
         }

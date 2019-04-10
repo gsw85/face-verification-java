@@ -5,22 +5,26 @@ import com.skymindglobal.face.detection.FaceLocalization;
 public class Prediction {
 
     private String label;
-    private double percentage;
+    private double score;
     private FaceLocalization faceLocalization;
 
-    public Prediction(String label, double percentage, FaceLocalization faceLocalization) {
+    public Prediction(String label, double score, FaceLocalization faceLocalization) {
         this.label = label;
-        this.percentage = percentage;
+        this.score = score;
         this.faceLocalization = faceLocalization;
     }
 
     public Prediction(String label, double percentage) {
         this.label = label;
-        this.percentage = percentage;
+        this.score = percentage;
     }
 
     public String getLabel(){
         return this.label;
+    }
+
+    public double getScore(){
+        return this.score;
     }
 
     public FaceLocalization getFaceLocalization(){
@@ -28,6 +32,6 @@ public class Prediction {
     }
 
     public String toString() {
-        return String.format("%s: %.2f ", this.label, this.percentage);
+        return String.format("%s: %.2f ", this.label, this.score);
     }
 }
