@@ -3,10 +3,7 @@ package com.skymindglobal.face;
 import com.skymindglobal.face.detection.FaceDetector;
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCVDeepLearningFaceDetector;
-import com.skymindglobal.face.identification.CustomVGG16FaceIdentifier;
-import com.skymindglobal.face.identification.FaceIdentifier;
-import com.skymindglobal.face.identification.FaceNetNN4Small2FaceIdentifier;
-import com.skymindglobal.face.identification.Prediction;
+import com.skymindglobal.face.identification.*;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -102,8 +99,9 @@ public class FaceID {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new CustomVGG16FaceIdentifier(3);
             case FaceIdentifier.FACENETNN4SMALL2:
-//                return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\lfw_custom_train_cropped"));
                 return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\office_faces_cropped"));
+            case FaceIdentifier.CNTEST:
+                return new CNFaceIdentifier(3);
             default:
                 return null;
         }

@@ -17,6 +17,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
 public class OpenCVDeepLearningFaceDetector extends FaceDetector {
 
     private opencv_dnn.Net model;
+    private int margin_percent = 10;
 
     public OpenCVDeepLearningFaceDetector(int imageWidth, int imageHeight, double detectionThreshold) {
         this.setImageHeight(imageHeight);
@@ -80,6 +81,15 @@ public class OpenCVDeepLearningFaceDetector extends FaceDetector {
                 float bx = f3 * ori_width;
                 //bottom right point's y
                 float by = f4 * ori_height;
+
+                // add margin
+                int w = (int) ((bx-tx)*margin_percent/100);
+                int h = (int) ((by-ty)*margin_percent/100);
+                tx = tx-w;
+                ty = ty-h;
+                bx = bx+w;
+                by = by+w;
+
                 faceLocalizations.add(new FaceLocalization(tx, ty, bx, by));
             }
         }

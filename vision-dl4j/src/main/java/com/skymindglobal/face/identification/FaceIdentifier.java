@@ -9,6 +9,7 @@ import java.util.List;
 public class FaceIdentifier implements IFaceIdentifier{
     public static final String CUSTOM_VGG16 = "CUSTOM_VGG16";
     public static final String FACENETNN4SMALL2 = "FACENETNN4SMALL2";
+    public static final String CNTEST = "CNTEST";
 
     public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, opencv_core.Mat image) throws IOException {
         return null;

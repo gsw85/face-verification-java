@@ -26,11 +26,9 @@ import java.util.Random;
 public class FaceNetEmbedTrainer {
     private static final Logger log = LoggerFactory.getLogger(FaceNetEmbedTrainer.class);
 
-    private static String unique_id = "lfw_v0";
-    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/facenet_" + unique_id + ".zip";
-
-    private static int nEpochs = 1;
-    private static int batchSize = 48; // depending on your hardware, you will want to increase or decrease
+    private static String unique_id = "facenet_embedding";
+    private static int nEpochs = 100;
+    private static int batchSize = 64; // depending on your hardware, you will want to increase or decrease
     private static int numExamples = LFWLoader.NUM_IMAGES;
     private static double splitTrainTest = 1.0;
 
@@ -46,6 +44,7 @@ public class FaceNetEmbedTrainer {
     private static boolean TRAINING_MODE = true;
     private static int modelCheckpointInterval = 1;
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
+    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/facenet_embedding"+unique_id+".zip";
 
     public static void main(String[] args) throws IOException {
 

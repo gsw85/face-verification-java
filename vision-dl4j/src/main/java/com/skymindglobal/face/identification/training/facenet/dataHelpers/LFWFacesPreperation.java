@@ -18,7 +18,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class LFWFacesPreperation {
     private static String lfwSource = "D:\\Public_Data\\lfw\\lfw";
-
     private static String imageSourceTrainCropped = "D:\\Public_Data\\lfw\\lfw_opencv_face";;
 
     private static int OUTPUT_IMAGE_WIDTH = 96;
