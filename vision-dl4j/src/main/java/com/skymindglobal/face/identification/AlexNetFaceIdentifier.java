@@ -103,7 +103,6 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
 
             // predicts
             INDArray output = model.output(_image);
-            log.info(String.valueOf(output));
             List<Prediction> predictions = decodePredictions(output, faceLocalizations.get(i));
             collection.add(predictions);
         }
@@ -115,14 +114,17 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
         int[] topX = new int[this.numPrediction];
         float[] topXProb = new float[this.numPrediction];
 
+        log.info(String.valueOf(encodedPredictions));
         int i = 0;
-        for (INDArray currentBatch = encodedPredictions.getRow(0).dup(); i < this.numPrediction; ++i) {
+        for (INDArray currentBatch = encodedPredictions.getRow(0).dup(); i < encodedPredictions.size(0); ++i) {
 
             topX[i] = Nd4j.argMax(currentBatch, 1).getInt(0, 0);
             topXProb[i] = currentBatch.getFloat(0, topX[i]);
             currentBatch.putScalar(0, topX[i], 0.0D);
             decodedPredictions.add(new Prediction(labels.get(topX[i]),(topXProb[i] * 100.0F),faceLocalization));
         }
+
+        log.info(String.valueOf(decodedPredictions.size()));
         return decodedPredictions;
     }
 }

@@ -8,45 +8,20 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>vision-dl4j</artifactId>
 
-    <repositories>
-        <repository>
-            <id>snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus snapshot repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>nexus-releases</id>
-            <name>Nexus Release Repository</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <dependencies>
+        <!-- nd4j -->
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>${nd4j.backend}</artifactId>
             <version>${nd4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-cuda-10.0</artifactId>
-            <version>1.0.0-beta3</version>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-api</artifactId>
+            <version>${nd4j.version}</version>
         </dependency>
 
         <!-- Dependency for parallel wrapper (for multi-GPU parameter averaging -->
@@ -55,7 +30,11 @@
             <artifactId>deeplearning4j-parallel-wrapper</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-cuda-10.0</artifactId>
+            <version>${dl4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-core</artifactId>
@@ -71,55 +50,36 @@
             <artifactId>deeplearning4j-zoo</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-modelimport</artifactId>
+            <version>${dl4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-nn</artifactId>
+            <version>${dl4j.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.datavec</groupId>
             <artifactId>datavec-api</artifactId>
             <version>${datavec.version}</version>
         </dependency>
-
-        <!-- datavec-data-codec: used only in video example for loading video data -->
+        <dependency>
+            <groupId>org.datavec</groupId>
+            <artifactId>datavec-data-image</artifactId>
+            <version>${datavec.version}</version>
+        </dependency>
         <dependency>
             <artifactId>datavec-data-codec</artifactId>
             <groupId>org.datavec</groupId>
             <version>${datavec.version}</version>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-        </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.bytedeco.javacpp-presets</groupId>-->
-            <!--<artifactId>cuda</artifactId>-->
-            <!--<version>10.0-7.3-1.4.3</version>-->
-            <!--<classifier>windows-x86_64-redist</classifier>-->
-        <!--</dependency>-->
-
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-modelimport</artifactId>
-            <version>1.0.0-beta3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-nn</artifactId>
-            <version>1.0.0-beta3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-nn</artifactId>
-            <version>1.0.0-beta3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>opencv</artifactId>
-            <version>4.0.1-1.5-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- OpenIMAJ-->
@@ -144,8 +104,74 @@
             <version>1.3.8</version>
         </dependency>
 
+        <!-- bytedeco -->
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>cuda</artifactId>
+            <version>10.0-7.3-1.4.3</version>
+            <classifier>windows-x86_64-redist</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv-platform</artifactId>
+            <version>4.0.1-1.5.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.0.1-1.4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.0.1-1.5-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- etc -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.26</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
