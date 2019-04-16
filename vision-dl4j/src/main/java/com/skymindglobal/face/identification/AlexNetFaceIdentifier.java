@@ -45,7 +45,7 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
 
     public AlexNetFaceIdentifier(int numPrediction) throws IOException, ClassNotFoundException {
         this.numPrediction = numPrediction;
-        modelFilename = new ClassPathResource("generated-models/face.bin").getFile().getAbsolutePath();
+        modelFilename = new ClassPathResource("ZHZD/face.bin").getFile().getAbsolutePath();
         loadCNTrainingEnvironmentConfiguration();
         if (new File(modelFilename).exists()) {
             log.info("Load model...");
