@@ -28,7 +28,7 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.CUSTOM_VGG16);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.ZHZD);
 
         VideoCapture capture = new VideoCapture();
         capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);
@@ -101,7 +101,7 @@ public class FaceID {
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FACENETNN4SMALL2:
                 return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\office_faces_nice"));
-            case FaceIdentifier.CNTEST:
+            case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:
                 return null;

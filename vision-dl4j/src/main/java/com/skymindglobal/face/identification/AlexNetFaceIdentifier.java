@@ -9,12 +9,12 @@ import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.NativeImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.io.ClassPathResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
     // labels - model's classes
     private static List<String> labels;
     private MultiLayerNetwork model = null;
-    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/face.bin";
+    private static String modelFilename;
     public static final int WIDTH = 100;
     public static final int HEIGHT = 100;
     private int numPrediction;
@@ -45,7 +45,7 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
 
     public AlexNetFaceIdentifier(int numPrediction) throws IOException, ClassNotFoundException {
         this.numPrediction = numPrediction;
-
+        modelFilename = new ClassPathResource("generated-models/face.bin").getFile().getAbsolutePath();
         loadCNTrainingEnvironmentConfiguration();
         if (new File(modelFilename).exists()) {
             log.info("Load model...");
@@ -61,14 +61,12 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
 
     private void loadCNTrainingEnvironmentConfiguration() throws IOException {
         ParentPathLabelGenerator labelMaker= new ParentPathLabelGenerator();
-        InputSplit trainData= getData("D:\\Downloads\\fz\\fz\\train",labelMaker);
-
+        File _file = new ClassPathResource("ZHZD/fz/train").getFile();
+        InputSplit trainData= getData(_file.getAbsolutePath(),labelMaker);
         ImageRecordReader recordReader = new ImageRecordReader(HEIGHT, WIDTH, channels, labelMaker);
         recordReader.initialize(trainData, null);
-
         int batchSize= 115; // load all train for normalization stats
         RecordReaderDataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, batchSize, 1, numLabels);
-
         labels = dataIter.getLabels();
         _DataNormalization = new ImagePreProcessingScaler(0, 1);
         _DataNormalization.fit(dataIter);
