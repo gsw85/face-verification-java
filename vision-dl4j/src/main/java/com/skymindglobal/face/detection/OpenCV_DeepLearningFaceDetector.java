@@ -14,12 +14,15 @@ import static org.bytedeco.javacpp.opencv_dnn.blobFromImage;
 import static org.bytedeco.javacpp.opencv_dnn.readNetFromCaffe;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
-public class OpenCVDeepLearningFaceDetector extends FaceDetector {
+public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
 
     private opencv_dnn.Net model;
-    private int margin_percent = 10;
+    private int margin_percent = 0;
+    private opencv_core.Mat detectedFaces;
+    private int inputImageHeight;
+    private int inputImageWidth;
 
-    public OpenCVDeepLearningFaceDetector(int imageWidth, int imageHeight, double detectionThreshold) {
+    public OpenCV_DeepLearningFaceDetector(int imageWidth, int imageHeight, double detectionThreshold) {
         this.setImageHeight(imageHeight);
         this.setImageWidth(imageWidth);
         this.setDetectionThreshold(detectionThreshold);
@@ -40,9 +43,9 @@ public class OpenCVDeepLearningFaceDetector extends FaceDetector {
     }
 
     @Override
-    public List<FaceLocalization> detectFaces(opencv_core.Mat image) {
-        int ori_height = image.size().height();
-        int ori_width = image.size().width();
+    public void detectFaces(opencv_core.Mat image) {
+        inputImageHeight = image.size().height();
+        inputImageWidth = image.size().width();
 
         // resize the image to match the input size of the model
         resize(image, image, new opencv_core.Size(this.getImage_width(), this.getImage_height()));
@@ -56,17 +59,17 @@ public class OpenCVDeepLearningFaceDetector extends FaceDetector {
         // set the input to network model
         model.setInput(blob);
         // feed forward the input to the netwrok to get the output matrix
-        opencv_core.Mat output = model.forward();
-        return MatToFaceLocalization(ori_height, ori_width , output);
+        detectedFaces = model.forward();
     }
 
-    private List<FaceLocalization> MatToFaceLocalization(int ori_height, int ori_width, opencv_core.Mat output) {
+    @Override
+    public List<FaceLocalization> getFaceLocalization() {
         // extract a 2d matrix for 4d output matrix with form of (number of detections x 7)
-        opencv_core.Mat ne = new opencv_core.Mat(new opencv_core.Size(output.size(3), output.size(2)), CV_32F, output.ptr(0, 0));
+        opencv_core.Mat ne = new opencv_core.Mat(new opencv_core.Size(detectedFaces.size(3), detectedFaces.size(2)), CV_32F, detectedFaces.ptr(0, 0));
         // create indexer to access elements of the matric
         FloatIndexer srcIndexer = ne.createIndexer();
         List<FaceLocalization> faceLocalizations = new ArrayList();
-        for (int i = 0; i < output.size(3); i++) {//iterate to extract elements
+        for (int i = 0; i < detectedFaces.size(3); i++) {//iterate to extract elements
             float confidence = srcIndexer.get(i, 2);
             float f1 = srcIndexer.get(i, 3);
             float f2 = srcIndexer.get(i, 4);
@@ -74,13 +77,13 @@ public class OpenCVDeepLearningFaceDetector extends FaceDetector {
             float f4 = srcIndexer.get(i, 6);
             if (confidence > this.getDetection_threshold()) {
                 //top left point's x
-                float tx = f1 * ori_width;
+                float tx = f1 * inputImageWidth;
                 //top left point's y
-                float ty = f2 * ori_height;
+                float ty = f2 * inputImageHeight;
                 //bottom right point's x
-                float bx = f3 * ori_width;
+                float bx = f3 * inputImageWidth;
                 //bottom right point's y
-                float by = f4 * ori_height;
+                float by = f4 * inputImageHeight;
 
                 // add margin
                 int w = (int) ((bx-tx)*margin_percent/100);

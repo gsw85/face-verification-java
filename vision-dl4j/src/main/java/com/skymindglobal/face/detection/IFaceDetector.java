@@ -17,6 +17,7 @@ interface IFaceDetector {
     public void setDetectionThreshold(double threshold);
     public double getDetection_threshold();
 
-    public List<FaceLocalization> detectFaces(opencv_core.Mat image);
+    public void detectFaces(opencv_core.Mat image);
+    public List<FaceLocalization> getFaceLocalization();
 }
 

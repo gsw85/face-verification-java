@@ -1,8 +1,7 @@
 package com.skymindglobal.face.identification.training.facenet.dataHelpers;
 
 import com.skymindglobal.face.detection.FaceLocalization;
-import com.skymindglobal.face.detection.OpenCVDeepLearningFaceDetector;
-import org.apache.commons.io.FileUtils;
+import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Java2DFrameUtils;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
@@ -47,11 +45,12 @@ public class LFWFacesPreperation {
     }
 
     public static void detectFacesAndSave(String source, String target) throws IOException {
-        OpenCVDeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCVDeepLearningFaceDetector(300, 300, 0.6);
+        OpenCV_DeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCV_DeepLearningFaceDetector(300, 300, 0.6);
         opencv_core.Mat image = imread(source);
 
         resize(image, image, new opencv_core.Size(OPENCV_DL_FACEDETECTOR_WIDTH, OPENCV_DL_FACEDETECTOR_HEIGHT));
-        List<FaceLocalization> faceLocalizations = _OpenCVDeepLearningFaceDetector.detectFaces(image);
+        _OpenCVDeepLearningFaceDetector.detectFaces(image);
+        List<FaceLocalization> faceLocalizations = _OpenCVDeepLearningFaceDetector.getFaceLocalization();
 
         for (FaceLocalization i : faceLocalizations) {
             int X = (int) i.getLeft_x();

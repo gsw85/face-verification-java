@@ -24,15 +24,13 @@ import static org.nd4j.linalg.ops.transforms.Transforms.*;
 public class FaceNetVectorizer {
     private static final Logger log = LoggerFactory.getLogger(FaceNetVectorizer.class);
 
-    private static String unique_id = "lfw_v4";
-    private static String suffix = "_office";
-    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/facenet_" + unique_id + ".zip";
-    private static String CSV_FILE_NAME = new File(".").getAbsolutePath() + "/generated-models/facenet_" + unique_id + suffix + ".csv";
+    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/facenet_embeddingfacenet_embedding.zip";
+    private static String CSV_FILE_NAME = new File(".").getAbsolutePath() + "/generated-models/aligned_distance.csv";
     private static ComputationGraph net;
 
     public static void main(String[] args) throws IOException {
 
-        File dir = new File("D:\\Public_Data\\face_recog\\office_faces_cropped_margin");
+        File dir = new File("D:\\Public_Data\\face_recog\\lfw_test_align_96");
         ImageRecordReader recordReaderSource = new ImageRecordReader(96, 96, 3, new ParentPathLabelGenerator());
         recordReaderSource.initialize(new FileSplit(dir));
         RecordReaderDataSetIterator source = new RecordReaderDataSetIterator(recordReaderSource, 1, 1, dir.listFiles().length);

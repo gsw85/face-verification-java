@@ -13,6 +13,8 @@ import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
+import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.nd4j.linalg.factory.Nd4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,36 +26,39 @@ import java.util.stream.Collectors;
 
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 import static org.nd4j.linalg.ops.transforms.Transforms.cosineDistance;
+import static org.nd4j.linalg.ops.transforms.Transforms.euclideanDistance;
 
 public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
     private static final Logger log = LoggerFactory.getLogger(FaceNetNN4Small2FaceIdentifier.class);
-
-    private static final int FaceNetNN4Small2_HEIGHT = 96;
-    private static final int FaceNetNN4Small2_WIDTH = 96;
-    private static final int channels = 3;
-    private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
-    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/embedding.zip";
-    private static ArrayList<FaceNetEmbed> FaceNetEmbedList = new ArrayList<>();
-    private static ComputationGraph snipped;
     private static final String EMBED_DISTANCE = "EMBED_DISTANCE";
     private static final String SIMILARITY_MODEL = "SIMILARITY_MODEL";
     private static final String NN_CLASSIFIER = "NN_CLASSIFIER";
     private static String prediction_mode = FaceNetNN4Small2FaceIdentifier.EMBED_DISTANCE;
+
+    private static final int FaceNetNN4Small2_HEIGHT = 96;
+    private static final int FaceNetNN4Small2_WIDTH = 96;
+    private static final int channels = 3;
+
+    private static String embeddingModelFilename = new File(".").getAbsolutePath() + "/generated-models/embedding.zip";
     private static String similarityModelFile = new File(".").getAbsolutePath() + "/generated-models/same_or_not_softmaxtest1.zip";
     private static String classifierModelFile = new File(".").getAbsolutePath() + "/generated-models/lfw_classification_tryrun0.zip";
+
+    private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
+    private static ArrayList<FaceNetEmbed> FaceNetEmbedList = new ArrayList<>();
     private ComputationGraph similarityModel;
     private ComputationGraph classifierModel;
     private List<String> labels;
+    private static ComputationGraph snipped;
 
     public FaceNetNN4Small2FaceIdentifier(File classDict) throws IOException {
 
-        ImageRecordReader recordReader = new ImageRecordReader(FaceNetNN4Small2_HEIGHT, FaceNetNN4Small2_WIDTH, channels, labelMaker);
-        recordReader.initialize(new FileSplit(classDict));
-        RecordReaderDataSetIterator iter = new RecordReaderDataSetIterator(recordReader, 1, 1, classDict.listFiles().length);
-
-        List<String> labels = iter.getLabels();
-        if (new File(modelFilename).exists()) {
+        if (new File(embeddingModelFilename).exists()) {
+            ImageRecordReader recordReader = new ImageRecordReader(FaceNetNN4Small2_HEIGHT, FaceNetNN4Small2_WIDTH, channels, labelMaker);
+            recordReader.initialize(new FileSplit(classDict));
+            RecordReaderDataSetIterator iter = new RecordReaderDataSetIterator(recordReader, 1, 1, classDict.listFiles().length);
+            List<String> labels = iter.getLabels();
             loadFeatureNetwork();
+            loadEmbeddingDictionary(iter, labels);
         }
 
         if(new File(similarityModelFile).exists()){
@@ -64,20 +69,19 @@ public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
             loadNNClassifierModel();
         }
 
-        prepareAnchors(iter, labels);
 
-        loadLabels();
+//        loadLabels();
     }
 
-    private void loadLabels() throws IOException {
-        LFWCroppedDatasetIterator _LFWCroppedDatasetIterator = new LFWCroppedDatasetIterator(
-                new File("D:\\Public_Data\\face_recog\\lfw_train_96"),
-                new File("D:\\Public_Data\\face_recog\\lfw_test_96"),
-                472,
-                465
-        );
-        labels = _LFWCroppedDatasetIterator.trainIterator().getLabels();
-    }
+//    private void loadLabels() throws IOException {
+//        LFWCroppedDatasetIterator _LFWCroppedDatasetIterator = new LFWCroppedDatasetIterator(
+//                new File("D:\\Public_Data\\face_recog\\lfw_train_96"),
+//                new File("D:\\Public_Data\\face_recog\\lfw_test_96"),
+//                472,
+//                465
+//        );
+//        labels = _LFWCroppedDatasetIterator.trainIterator().getLabels();
+//    }
 
     private void loadNNClassifierModel() throws IOException {
         log.info("Load classifier model...");
@@ -85,11 +89,11 @@ public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
     }
 
     private void loadSimilarityModel() throws IOException {
-        log.info("Load feature model...");
+        log.info("Load embedding model...");
         similarityModel= ModelSerializer.restoreComputationGraph(similarityModelFile, true);
     }
 
-    private void prepareAnchors(RecordReaderDataSetIterator iter, List<String> labels) {
+    private void loadEmbeddingDictionary(RecordReaderDataSetIterator iter, List<String> labels) {
         while (iter.hasNext()) {
             DataSet Ds = iter.next();
             INDArray embedding = getEmbeddings(Ds.getFeatures());
@@ -100,7 +104,7 @@ public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
 
     private void loadFeatureNetwork() throws IOException {
         log.info("Load feature model...");
-        ComputationGraph net = ModelSerializer.restoreComputationGraph(modelFilename, true);
+        ComputationGraph net = ModelSerializer.restoreComputationGraph(embeddingModelFilename, true);
         snipped = new TransferLearning.GraphBuilder(net)
                 .setFeatureExtractor("embeddings") // the L2Normalize vertex and layers below are frozen
                 .removeVertexAndConnections("lossLayer")
@@ -138,7 +142,7 @@ public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
             List<Prediction> predictions = null;
             switch(prediction_mode){
                 case FaceNetNN4Small2FaceIdentifier.EMBED_DISTANCE:
-                    predictions = predictEmbeddingDistance(_image, faceLocalizations.get(i),10, 0.15);
+                    predictions = predictEmbeddingDistance(_image, faceLocalizations.get(i),10, 1.0);
                     break;
                 case FaceNetNN4Small2FaceIdentifier.SIMILARITY_MODEL:
                     predictions = predictSimilarityModel(_image, faceLocalizations.get(i), 10, 0.5);
@@ -221,30 +225,32 @@ public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
         return positive/(positive+negative);
     }
 
-    private List<Prediction> predictEmbeddingDistance(INDArray image,FaceLocalization faceLocalization, int numPredictions, double cosineDistanceThreshold) {
+    private List<Prediction> predictEmbeddingDistance(INDArray image,FaceLocalization faceLocalization, int numPredictions, double Threshold) {
         INDArray anchor = getEmbeddings(image);
         List<Prediction> predicted = new ArrayList<>();
         for (FaceNetEmbed i:FaceNetEmbedList){
-            double cosineDistance = cosineDistance(anchor, i.getEmbedding());
-            if(cosineDistance<cosineDistanceThreshold){
-                predicted.add(new Prediction(i.getLabel(), cosineDistance, faceLocalization));
-            }
+            INDArray embed = i.getEmbedding();
+            double distance = euclideanDistance(anchor, embed);
+            predicted.add(new Prediction(i.getLabel(), distance, faceLocalization));
         }
 
         // aggregator - average comparison per class
         List<Prediction> summary = new ArrayList<>();
         final Map<String, List<Prediction>> map = predicted.stream().collect(Collectors.groupingBy(p -> p.getLabel()));
         for (final Map.Entry<String, List<Prediction>> entry : map.entrySet()) {
-            final double min = entry.getValue().stream()
-                    .mapToDouble(p -> p.getScore()).min().getAsDouble();
-
-            final double topNAvg = entry.getValue().stream()
-                    .mapToDouble(p -> p.getScore()).sorted().limit(3).average().getAsDouble();
+            final double average = entry.getValue().stream()
+                    .mapToDouble(p -> p.getScore()).average().getAsDouble();
+//
+//            final double min = entry.getValue().stream()
+//                    .mapToDouble(p -> p.getScore()).min().getAsDouble();
+//            final double topNAvg = entry.getValue().stream()
+//                    .mapToDouble(p -> p.getScore()).sorted().limit(3).average().getAsDouble();
             // median
-            MedianFinder _MedianFinder = new MedianFinder();
-            entry.getValue().stream().forEach(p -> _MedianFinder.addNum(p.getScore()));
-
-            summary.add(new Prediction(entry.getKey(), topNAvg, faceLocalization));
+//            MedianFinder _MedianFinder = new MedianFinder();
+//            entry.getValue().stream().forEach(p -> _MedianFinder.addNum(p.getScore()));
+            if(average < Threshold) {
+                summary.add(new Prediction(entry.getKey(), average, faceLocalization));
+            }
         }
 
         // sort and select top N
@@ -292,6 +298,24 @@ public class FaceNetNN4Small2FaceIdentifier extends FaceIdentifier  {
             }else {
                 return (minHeap.peek()+maxHeap.peek())/2.0;
             }
+        }
+    }
+
+    class FaceNetEmbed {
+        private final String label;
+        private final INDArray embedding;
+
+        public FaceNetEmbed(String label, INDArray embedding) {
+            this.label = label;
+            this.embedding = embedding;
+        }
+
+        public INDArray getEmbedding() {
+            return this.embedding;
+        }
+
+        public String getLabel() {
+            return this.label;
         }
     }
 }

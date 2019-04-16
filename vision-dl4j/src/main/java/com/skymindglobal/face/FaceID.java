@@ -1,8 +1,9 @@
 package com.skymindglobal.face;
 
+import com.skymindglobal.face.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.face.detection.FaceDetector;
 import com.skymindglobal.face.detection.FaceLocalization;
-import com.skymindglobal.face.detection.OpenCVDeepLearningFaceDetector;
+import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
 import com.skymindglobal.face.identification.*;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -15,7 +16,6 @@ import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_WIDTH;
 import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.FACENETNN4SMALL2);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.CUSTOM_VGG16);
 
         VideoCapture capture = new VideoCapture();
         capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);
@@ -57,7 +57,8 @@ public class FaceID {
                 Mat cloneCopy = new Mat();
 
                 image.copyTo(cloneCopy);
-                List<FaceLocalization> faceLocalizations = FaceDetector.detectFaces(cloneCopy);
+                FaceDetector.detectFaces(cloneCopy);
+                List<FaceLocalization> faceLocalizations = FaceDetector.getFaceLocalization();
                 annotateFaces(faceLocalizations, image);
 
                 image.copyTo(cloneCopy);
@@ -97,11 +98,11 @@ public class FaceID {
     private static FaceIdentifier getFaceIdentifier(String faceIdentifier) throws IOException, ClassNotFoundException {
         switch (faceIdentifier){
             case FaceIdentifier.CUSTOM_VGG16:
-                return new CustomVGG16FaceIdentifier(3);
+                return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FACENETNN4SMALL2:
-                return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\office_faces_cropped"));
+                return new FaceNetNN4Small2FaceIdentifier(new File("D:\\Public_Data\\face_recog\\office_faces_nice"));
             case FaceIdentifier.CNTEST:
-                return new CNFaceIdentifier(3);
+                return new AlexNetFaceIdentifier(5);
             default:
                 return null;
         }
@@ -110,7 +111,9 @@ public class FaceID {
     private static FaceDetector getFaceDetector(String faceDetector) {
         switch (faceDetector){
             case FaceDetector.OPENCV_DL_FACEDETECTOR:
-                return new OpenCVDeepLearningFaceDetector(300, 300, 0.6);
+                return new OpenCV_DeepLearningFaceDetector(300, 300, 0.6);
+            case FaceDetector.FKE_FACEDETECTOR:
+                return new OpenIMAJ_FKEFaceDetector( 0.6);
             default:
                 return null;
         }

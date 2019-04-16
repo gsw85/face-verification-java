@@ -11,6 +11,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class FaceDetector implements IFaceDetector {
     public static final String OPENCV_DL_FACEDETECTOR = "OPENCV_DL_FACEDETECTOR";
+    public static final String FKE_FACEDETECTOR = "FKE_FACEDETECTOR";
     private opencv_dnn.Net model;
     private int image_width;
     private int image_height;
@@ -50,7 +51,12 @@ public class FaceDetector implements IFaceDetector {
     }
 
     @Override
-    public List<FaceLocalization> detectFaces(opencv_core.Mat image) {
+    public void detectFaces(opencv_core.Mat image) {
+
+    }
+
+    @Override
+    public List<FaceLocalization> getFaceLocalization() {
         return null;
     }
 
