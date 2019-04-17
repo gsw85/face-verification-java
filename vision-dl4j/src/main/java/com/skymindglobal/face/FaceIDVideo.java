@@ -11,6 +11,7 @@ import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.nd4j.linalg.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class FaceIDVideo {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE:
-                return new DistanceFaceIdentifier(new File("D:\\Public_Data\\face_recog\\vgg16\\test"));
+                return new DistanceFaceIdentifier(new ClassPathResource("Office-Faces").getFile(),3, 0.7);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:

@@ -17,10 +17,14 @@ public class DistanceFaceIdentifier extends FaceIdentifier {
 
     private static ArrayList<LabelFeaturePair> labelFeaturePairList = new ArrayList<>();
     private final FaceFeatureProvider _FaceFeatureProvider;
+    private final int numPredictions;
+    private final double threshold;
 
-    public DistanceFaceIdentifier(File classDict) throws IOException {
+    public DistanceFaceIdentifier(File classDict, int numPredictions, double threshold) throws IOException {
         _FaceFeatureProvider = new VGG16FeatureProvider();
         labelFeaturePairList = _FaceFeatureProvider.setupAnchor(classDict);
+        this.numPredictions = numPredictions;
+        this.threshold = threshold;
     }
 
     @Override
@@ -37,7 +41,8 @@ public class DistanceFaceIdentifier extends FaceIdentifier {
             opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
 
             // predicts
-            List<Prediction> predictions = _FaceFeatureProvider.predict(crop_image, faceLocalizations.get(i),1, 0.75);
+            List<Prediction> predictions = _FaceFeatureProvider.predict(
+                    crop_image, faceLocalizations.get(i), this.numPredictions, this.threshold);
             collection.add(predictions);
         }
         return collection;

@@ -5,6 +5,7 @@ import com.skymindglobal.face.detection.FaceDetector;
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
 import com.skymindglobal.face.identification.*;
+import org.apache.xmlgraphics.util.ClasspathResource;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -15,6 +16,7 @@ import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_WIDTH;
 import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.nd4j.linalg.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,7 +103,8 @@ public class FaceID {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE:
-                return new DistanceFaceIdentifier(new File("D:\\Public_Data\\face_recog\\vgg16\\test"));
+//                return new DistanceFaceIdentifier(new File("D:\\Public_Data\\face_recog\\vgg16\\test"));
+                return new DistanceFaceIdentifier(new ClassPathResource("Office-Faces").getFile(), 3, 0.7);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:
