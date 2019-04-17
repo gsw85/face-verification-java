@@ -1,43 +1,40 @@
 package com.skymindglobal.face;
 
-import com.skymindglobal.face.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.face.detection.FaceDetector;
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
+import com.skymindglobal.face.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.face.identification.*;
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
-
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
-import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_HEIGHT;
-import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_WIDTH;
-import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
+import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class FaceID {
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_imgproc.putText;
+import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
+
+public class FaceIDVideo {
     private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
     private static final int WIDTH = 480;//1920;
     private static final int HEIGHT = 360;//1080;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.FEATURE_DISTANCE);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.ZHZD);
 
-        VideoCapture capture = new VideoCapture();
-        capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);
-        capture.set(CAP_PROP_FRAME_HEIGHT, HEIGHT);
+        String videoPath = "C:\\Users\\PK Chuah\\Videos\\Captures\\sample.mp4";
+        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoPath);
+        grabber.setFormat("mp4");
+        OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+        grabber.start();
 
-        if (!capture.open(0)) {
-            System.out.println("Can not open the cam !!!");
-        }
-
-        Mat image = new Mat();
         CanvasFrame mainframe = new CanvasFrame(
                 "FaceLocalization Identification",
 //                0,
@@ -51,7 +48,9 @@ public class FaceID {
         mainframe.setVisible(true);
 
         while (true) {
-            while (capture.read(image) && mainframe.isVisible()) {
+            while (mainframe.isVisible()) {
+                Frame frame = grabber.grabImage();
+                opencv_core.Mat image = converter.convert(frame);
 
                 Mat cloneCopy = new Mat();
 
@@ -84,13 +83,13 @@ public class FaceID {
                 putText(
                         image,
                         i.get(j).toString(),
-                        new opencv_core.Point(
+                        new Point(
                                 (int)i.get(j).getFaceLocalization().getLeft_x(),
                                 (int)i.get(j).getFaceLocalization().getLeft_y() + j*13
                         ),
                         FONT_HERSHEY_PLAIN,
                         0.7,
-                        opencv_core.Scalar.YELLOW
+                        Scalar.YELLOW
                 );
             }
         }
@@ -122,7 +121,7 @@ public class FaceID {
 
     private static void annotateFaces(List<FaceLocalization> faceLocalizations, Mat image) {
         for (FaceLocalization i : faceLocalizations){
-            rectangle(image,new opencv_core.Rect(new opencv_core.Point((int) i.getLeft_x(),(int) i.getLeft_y()), new opencv_core.Point((int) i.getRight_x(),(int) i.getRight_y())), new opencv_core.Scalar(255, 0, 0, 0));
+            rectangle(image,new Rect(new Point((int) i.getLeft_x(),(int) i.getLeft_y()), new Point((int) i.getRight_x(),(int) i.getRight_y())), new Scalar(255, 0, 0, 0));
         };
     }
 }

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -67,7 +68,11 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
         recordReader.initialize(trainData, null);
         int batchSize= 115; // load all train for normalization stats
         RecordReaderDataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, batchSize, 1, numLabels);
+
         labels = dataIter.getLabels();
+//        log.info(String.valueOf(labels));
+//        labels = new ArrayList<String>(Arrays.asList("0", "1", "2", "3", "4", "5"));
+
         _DataNormalization = new ImagePreProcessingScaler(0, 1);
         _DataNormalization.fit(dataIter);
     }

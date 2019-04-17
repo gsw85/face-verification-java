@@ -18,31 +18,24 @@ import static org.bytedeco.javacpp.opencv_imgproc.logPolar;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class FaceDatasetPreperation {
-    private static String lfwSource = "D:\\Public_Data\\lfw\\lfw";
+    private static String lfwSource = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office";
 
-    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\lfw_custom_train";
-    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\lfw_custom_test";
-    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\lfw_train_96";
-    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\lfw_test_96";
+    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_train";
+    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_test";
+    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\vgg16\\train";
+    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\vgg16\\test";
 
-    private static int trainPerc = 50;
-    private static int numClass = 50;
-    private static int minSamples = 20;
-    private static int maxSamples = 30;
-    private static int OUTPUT_IMAGE_WIDTH = 96;
-    private static int OUTPUT_IMAGE_HEIGHT = 96;
+    private static int trainPerc = 70;
+    private static int minSamples = 10;
+    private static int maxSamples = 20;
+    private static int OUTPUT_IMAGE_WIDTH = 224;
+    private static int OUTPUT_IMAGE_HEIGHT = 224;
     private static int OPENCV_DL_FACEDETECTOR_WIDTH = 300;
     private static int OPENCV_DL_FACEDETECTOR_HEIGHT = 300;
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FaceDatasetPreperation.class);
 
     public static void main(String[] args) throws IOException {
-        /**
-         * Random sample 50 classes from lfw: D:\Public_Data\lfw\lfw => D:\Public_Data\face_recog_lfw50\lfw50
-         * Detect and crop faces
-         * Resize image to 244: vgg16 input
-         *
-         **/
-//        dataSampling(minSamples, maxSamples);
+        dataSampling(minSamples, maxSamples);
         processFaces(imageSourceTrain, imageSourceTrainCropped);
         processFaces(imageSourceTest, imageSourceTestCropped);
 
@@ -62,9 +55,9 @@ public class FaceDatasetPreperation {
                     i++;
                 }
             }
-            if(i>=numClass){
-                break;
-            }
+//            if(i>=numClass){
+//                break;
+//            }
         }
     }
 
