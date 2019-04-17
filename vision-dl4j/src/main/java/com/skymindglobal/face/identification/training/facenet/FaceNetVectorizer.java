@@ -30,7 +30,7 @@ public class FaceNetVectorizer {
 
     public static void main(String[] args) throws IOException {
 
-        File dir = new File("D:\\Public_Data\\face_recog\\lfw_test_align_96");
+        File dir = new File("C:\\tmp\\test");
         ImageRecordReader recordReaderSource = new ImageRecordReader(96, 96, 3, new ParentPathLabelGenerator());
         recordReaderSource.initialize(new FileSplit(dir));
         RecordReaderDataSetIterator source = new RecordReaderDataSetIterator(recordReaderSource, 1, 1, dir.listFiles().length);

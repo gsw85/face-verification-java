@@ -2,10 +2,14 @@ package com.skymindglobal.face.identification.training.vgg16;
 
 import com.skymindglobal.face.identification.training.vgg16.dataHelpers.VGG16DatasetIterator;
 import com.skymindglobal.face.toolkit.LabelManager;
+import org.datavec.api.io.labels.ParentPathLabelGenerator;
+import org.datavec.api.split.FileSplit;
+import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.GradientNormalization;
+import org.deeplearning4j.nn.conf.WorkspaceMode;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -26,6 +30,7 @@ import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
@@ -38,15 +43,15 @@ import java.util.List;
 public class VGG16FaceIDTrainer {
     private static final Logger log = LoggerFactory.getLogger(VGG16FaceIDTrainer.class);
     // parameters for the training phase
-    private static int trainBatchSize = 64;
+    private static int trainBatchSize = 16;
     private static int nEpochs = 40;
-    private static double learningRate = 1e-3;
+    private static double learningRate = 0.05D;
     private static int nClasses = 0;
     private static List<String> labels;
     private static int seed = 123;
     private static int saveModelEpochInterval = 1;
     private static boolean TRAINING_MODE = true;
-    private static String unique_id = "vgg16_faceid_v14";
+    private static String unique_id = "vgg16_15classes";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".zip";
     private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/" + unique_id + ".lbl";
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + unique_id;
@@ -58,8 +63,8 @@ public class VGG16FaceIDTrainer {
         // Directory for Custom train and test datasets
         log.info("Load data...");
         VGG16DatasetIterator _VGG16DatasetIterator = new VGG16DatasetIterator(
-                new File("D:\\Public_Data\\face_recog\\lfw_custom_train_cropped"),
-                new File("D:\\Public_Data\\face_recog\\lfw_custom_test_cropped"),
+                new File("C:\\tmp\\train_15c"),
+                new File("C:\\tmp\\test_15c"),
                 trainBatchSize,
                 1 // get all samples
         );
@@ -87,12 +92,17 @@ public class VGG16FaceIDTrainer {
         }
         else{
             log.info("Build model...");
+
             ComputationGraph pretrained = (ComputationGraph) VGG16.builder().build().initPretrained(PretrainedType.VGGFACE);
             log.info(pretrained.summary());
+
             // Transfer Learning steps - Model Configurations.
             FineTuneConfiguration fineTuneConf = getFineTuneConfiguration();
+
             // Transfer Learning steps - Modify prebuilt model's architecture for current scenario
             model = buildComputationGraph(pretrained, fineTuneConf);
+
+            // Start training
             trainModel(trainIter,testIter, model);
         }
     }
@@ -122,7 +132,6 @@ public class VGG16FaceIDTrainer {
             }
             log.info(model.evaluate(trainIter).stats(true, false) + "\n");
             log.info(model.evaluate(testIter).stats(true, false) + "\n");
-
         }
     }
 
@@ -135,7 +144,6 @@ public class VGG16FaceIDTrainer {
                         new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                                 .nIn(2622).nOut(nClasses)
                                 .weightInit(WeightInit.DISTRIBUTION)
-                                //This weight init dist gave better results than Xavier
                                 .dist(new NormalDistribution(0,0.2*(2.0/(4096+nClasses))))
                                 .activation(Activation.SOFTMAX).build(),
                         "fc8")
@@ -147,15 +155,11 @@ public class VGG16FaceIDTrainer {
     }
 
     private static FineTuneConfiguration getFineTuneConfiguration() {
-
         FineTuneConfiguration _FineTuneConfiguration = new FineTuneConfiguration.Builder()
+                .updater(new Adam(learningRate))
                 .seed(seed)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
-                .gradientNormalizationThreshold(1.0)
-                .updater(new Nesterovs.Builder().learningRate(learningRate).momentum(Nesterovs.DEFAULT_NESTEROV_MOMENTUM).build())
-                .l2(0.001)
-                .activation(Activation.IDENTITY)
+                .trainingWorkspaceMode(WorkspaceMode.ENABLED)
+                .inferenceWorkspaceMode(WorkspaceMode.ENABLED)
                 .build();
 
         return _FineTuneConfiguration;
