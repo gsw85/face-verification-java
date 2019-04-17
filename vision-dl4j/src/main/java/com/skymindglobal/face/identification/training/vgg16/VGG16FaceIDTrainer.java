@@ -2,13 +2,8 @@ package com.skymindglobal.face.identification.training.vgg16;
 
 import com.skymindglobal.face.identification.training.vgg16.dataHelpers.VGG16DatasetIterator;
 import com.skymindglobal.face.toolkit.LabelManager;
-import org.datavec.api.io.labels.ParentPathLabelGenerator;
-import org.datavec.api.split.FileSplit;
-import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.GradientNormalization;
 import org.deeplearning4j.nn.conf.WorkspaceMode;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
@@ -23,15 +18,11 @@ import org.deeplearning4j.ui.storage.FileStatsStorage;
 import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.model.VGG16;
-import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.learning.config.Adam;
-import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +33,7 @@ import java.util.List;
 
 public class VGG16FaceIDTrainer {
     private static final Logger log = LoggerFactory.getLogger(VGG16FaceIDTrainer.class);
-    // parameters for the training phase
+    // parameters for the face_train phase
     private static int trainBatchSize = 16;
     private static int nEpochs = 40;
     private static double learningRate = 0.05D;
@@ -102,7 +93,7 @@ public class VGG16FaceIDTrainer {
             // Transfer Learning steps - Modify prebuilt model's architecture for current scenario
             model = buildComputationGraph(pretrained, fineTuneConf);
 
-            // Start training
+            // Start face_train
             trainModel(trainIter,testIter, model);
         }
     }

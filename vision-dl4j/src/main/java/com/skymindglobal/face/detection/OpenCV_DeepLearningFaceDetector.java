@@ -50,7 +50,7 @@ public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
         // resize the image to match the input size of the model
         resize(image, image, new opencv_core.Size(this.getImage_width(), this.getImage_height()));
 
-        // create a 4-dimensional blob from image with NCHW (Number of images in the batch -for training only-, Channel, Height, Width) dimensions order,
+        // create a 4-dimensional blob from image with NCHW (Number of images in the batch -for face_train only-, Channel, Height, Width) dimensions order,
         // for more detailes read the official docs at https://docs.opencv.org/trunk/d6/d0f/group__dnn.html#gabd0e76da3c6ad15c08b01ef21ad55dd8
         opencv_core.Mat blob = blobFromImage(image, 1.0,
                 new opencv_core.Size(this.getImage_width(), this.getImage_height()),

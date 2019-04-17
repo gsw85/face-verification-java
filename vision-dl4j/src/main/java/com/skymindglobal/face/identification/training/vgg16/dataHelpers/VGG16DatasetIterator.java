@@ -1,19 +1,13 @@
 package com.skymindglobal.face.identification.training.vgg16.dataHelpers;
 
-import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
-import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.split.FileSplit;
-import org.datavec.api.split.InputSplit;
-import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.nd4j.linalg.dataset.DataSet;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
 public class VGG16DatasetIterator {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(VGG16DatasetIterator.class);
