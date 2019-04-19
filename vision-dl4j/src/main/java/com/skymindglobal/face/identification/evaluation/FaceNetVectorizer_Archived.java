@@ -1,4 +1,4 @@
-package com.skymindglobal.face.identification.training.facenet;
+package com.skymindglobal.face.identification.evaluation;
 
 import com.skymindglobal.face.toolkit.CSVUtils;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
@@ -21,8 +21,8 @@ import java.util.Arrays;
 
 import static org.nd4j.linalg.ops.transforms.Transforms.*;
 
-public class FaceNetVectorizer {
-    private static final Logger log = LoggerFactory.getLogger(FaceNetVectorizer.class);
+public class FaceNetVectorizer_Archived {
+    private static final Logger log = LoggerFactory.getLogger(FaceNetVectorizer_Archived.class);
 
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/facenet_embeddingfacenet_embedding.zip";
     private static String CSV_FILE_NAME = new File(".").getAbsolutePath() + "/generated-models/aligned_distance.csv";

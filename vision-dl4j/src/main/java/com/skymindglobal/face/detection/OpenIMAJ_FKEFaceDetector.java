@@ -7,6 +7,7 @@ import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.processing.face.alignment.AffineAligner;
 import org.openimaj.image.processing.face.alignment.FaceAligner;
 import org.openimaj.image.processing.face.detection.keypoints.FKEFaceDetector;
+import org.openimaj.image.processing.face.detection.keypoints.FacialKeypoint;
 import org.openimaj.image.processing.face.detection.keypoints.KEDetectedFace;
 
 import java.awt.image.BufferedImage;
@@ -44,7 +45,6 @@ public class OpenIMAJ_FKEFaceDetector extends FaceDetector {
                 float by = i.getBounds().y + i.getBounds().height;
                 faceLocalizations.add(new FaceLocalization(tx, ty, bx, by));
             }
-
         }
         return faceLocalizations;
     }

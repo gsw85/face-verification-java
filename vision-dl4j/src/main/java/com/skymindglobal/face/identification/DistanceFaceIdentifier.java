@@ -14,15 +14,13 @@ import java.util.*;
 
 public class DistanceFaceIdentifier extends FaceIdentifier {
     private static final Logger log = LoggerFactory.getLogger(DistanceFaceIdentifier.class);
-
-    private static ArrayList<LabelFeaturePair> labelFeaturePairList = new ArrayList<>();
     private final FaceFeatureProvider _FaceFeatureProvider;
     private final int numPredictions;
     private final double threshold;
 
-    public DistanceFaceIdentifier(File classDict, int numPredictions, double threshold) throws IOException {
-        _FaceFeatureProvider = new VGG16FeatureProvider();
-        labelFeaturePairList = _FaceFeatureProvider.setupAnchor(classDict);
+    public DistanceFaceIdentifier(FaceFeatureProvider faceFeatureProvider, File classDict, int numPredictions, double threshold) throws IOException, ClassNotFoundException {
+        this._FaceFeatureProvider = faceFeatureProvider;
+        _FaceFeatureProvider.setupAnchor(classDict);
         this.numPredictions = numPredictions;
         this.threshold = threshold;
     }

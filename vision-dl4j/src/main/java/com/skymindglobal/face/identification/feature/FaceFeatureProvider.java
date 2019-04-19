@@ -19,7 +19,7 @@ public class FaceFeatureProvider implements IFaceFeatureProvider {
     }
 
     @Override
-    public ArrayList<LabelFeaturePair> setupAnchor(File classDict) throws IOException {
+    public ArrayList<LabelFeaturePair> setupAnchor(File classDict) throws IOException, ClassNotFoundException {
         return null;
     }
 

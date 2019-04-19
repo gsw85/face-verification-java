@@ -12,6 +12,6 @@ import java.util.List;
 
 interface IFaceFeatureProvider {
     public INDArray getEmbeddings(INDArray arr);
-    public ArrayList<LabelFeaturePair> setupAnchor(File classDict) throws IOException;
+    public ArrayList<LabelFeaturePair> setupAnchor(File classDict) throws IOException, ClassNotFoundException;
     public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold) throws IOException;
 }

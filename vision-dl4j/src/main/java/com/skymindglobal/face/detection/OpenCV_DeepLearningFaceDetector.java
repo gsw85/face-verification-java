@@ -29,7 +29,6 @@ public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
         setModel();
     }
 
-
     private void setModel() {
         String PROTO_FILE = null;
         String CAFFE_MODEL_FILE = null;

@@ -40,7 +40,7 @@ public class DistanceFaceIdentifier_Archived extends FaceIdentifier {
     private ComputationGraph classifierModel;
     private List<String> labels;
 
-    public DistanceFaceIdentifier_Archived(File classDict) throws IOException {
+    public DistanceFaceIdentifier_Archived(File classDict) throws IOException, ClassNotFoundException {
 
         _FaceFeatureProvider = new FaceNetNN4Small2FaceFeatureProvider();
         labelFeaturePairList = _FaceFeatureProvider.setupAnchor(classDict);

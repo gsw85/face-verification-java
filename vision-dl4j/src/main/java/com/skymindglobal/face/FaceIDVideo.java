@@ -5,6 +5,7 @@ import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
 import com.skymindglobal.face.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.face.identification.*;
+import com.skymindglobal.face.identification.feature.VGG16FeatureProvider;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.CanvasFrame;
@@ -102,7 +103,7 @@ public class FaceIDVideo {
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE:
                 File dictionary = new ClassPathResource("Office-Faces").getFile();
-                return new DistanceFaceIdentifier(dictionary,3, 0.7);
+                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary,3, 0.7);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:
@@ -114,7 +115,7 @@ public class FaceIDVideo {
         switch (faceDetector){
             case FaceDetector.OPENCV_DL_FACEDETECTOR:
                 return new OpenCV_DeepLearningFaceDetector(300, 300, 0.6);
-            case FaceDetector.FKE_FACEDETECTOR:
+            case FaceDetector.OPENIMAJ_FKE_FACEDETECTOR:
                 return new OpenIMAJ_FKEFaceDetector( 0.6);
             default:
                 return null;

@@ -14,31 +14,29 @@ import java.util.List;
 import java.util.Random;
 
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.logPolar;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class FaceDatasetPreperation {
     private static String lfwSource = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office";
-
-    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_train";
-    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_test";
-    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\vgg16\\train";
-    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\vgg16\\test";
-
-    private static int trainPerc = 70;
+    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_train_08_topN";
+    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_test_08_topN";
+    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\vgg16\\train_08_topN";
+    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\vgg16\\test_08_topN";
+    private static int seed = 123;
+    private static int trainPerc = 100;
     private static int minSamples = 10;
-    private static int maxSamples = 20;
+    private static int maxSamples = 10000;
     private static int OUTPUT_IMAGE_WIDTH = 224;
     private static int OUTPUT_IMAGE_HEIGHT = 224;
     private static int OPENCV_DL_FACEDETECTOR_WIDTH = 300;
     private static int OPENCV_DL_FACEDETECTOR_HEIGHT = 300;
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FaceDatasetPreperation.class);
+    private static int maxImageNeededPerClass = 10000;
 
     public static void main(String[] args) throws IOException {
         dataSampling(minSamples, maxSamples);
         processFaces(imageSourceTrain, imageSourceTrainCropped);
         processFaces(imageSourceTest, imageSourceTestCropped);
-
     }
 
     private static void dataSampling(int minSamples, int maxSamples) {
@@ -79,18 +77,23 @@ public class FaceDatasetPreperation {
     }
 
     public static void listFilesForFolder(final File folder, String imageSourceCropped) throws IOException {
+        int counter = 0;
         for (final File fileEntry : folder.listFiles()) {
+            log.info(fileEntry.getAbsolutePath());
             if (fileEntry.isDirectory()) {
                 listFilesForFolder(fileEntry, imageSourceCropped);
             } else {
-                String target = imageSourceCropped + "\\" + folder.getName() + '\\' + fileEntry.getName();
-                detectFacesAndSave(fileEntry.getAbsolutePath(), target);
+                if(counter<maxImageNeededPerClass){
+                    String target = imageSourceCropped + "\\" + folder.getName() + '\\' + fileEntry.getName();
+                    detectFacesAndSave(fileEntry.getAbsolutePath(), target);
+                    counter++;
+                }
             }
         }
     }
 
     public static void detectFacesAndSave(String source, String target) throws IOException {
-        OpenCV_DeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCV_DeepLearningFaceDetector(300, 300, 0.6);
+        OpenCV_DeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCV_DeepLearningFaceDetector(300, 300, 0.8);
         opencv_core.Mat image = imread(source);
 
         // detect faces

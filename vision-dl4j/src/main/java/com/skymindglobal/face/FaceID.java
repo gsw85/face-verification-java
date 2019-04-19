@@ -5,7 +5,8 @@ import com.skymindglobal.face.detection.FaceDetector;
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
 import com.skymindglobal.face.identification.*;
-import org.apache.xmlgraphics.util.ClasspathResource;
+import com.skymindglobal.face.identification.feature.VGG16FeatureProvider;
+import com.skymindglobal.face.identification.feature.XceptionFeatureProvider;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -24,10 +25,10 @@ import java.util.List;
 
 public class FaceID {
     private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-    private static final int WIDTH = 480;//1920;
-    private static final int HEIGHT = 360;//1080;
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1080;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
         FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.FEATURE_DISTANCE);
 
@@ -42,8 +43,8 @@ public class FaceID {
         Mat image = new Mat();
         CanvasFrame mainframe = new CanvasFrame(
                 "FaceLocalization Identification",
-//                0,
-//                null,
+                0,
+                null,
                 CanvasFrame.getDefaultGamma() / 2.2
         );
 
@@ -103,8 +104,8 @@ public class FaceID {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE:
-//                return new DistanceFaceIdentifier(new File("D:\\Public_Data\\face_recog\\vgg16\\test"));
-                return new DistanceFaceIdentifier(new ClassPathResource("Office-Faces").getFile(), 3, 0.7);
+                File dictionary = new ClassPathResource("Office-Faces").getFile();
+                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary, 3, 0.8);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:
@@ -115,8 +116,8 @@ public class FaceID {
     private static FaceDetector getFaceDetector(String faceDetector) {
         switch (faceDetector){
             case FaceDetector.OPENCV_DL_FACEDETECTOR:
-                return new OpenCV_DeepLearningFaceDetector(300, 300, 0.6);
-            case FaceDetector.FKE_FACEDETECTOR:
+                return new OpenCV_DeepLearningFaceDetector(300, 300, 0.8);
+            case FaceDetector.OPENIMAJ_FKE_FACEDETECTOR:
                 return new OpenIMAJ_FKEFaceDetector( 0.6);
             default:
                 return null;

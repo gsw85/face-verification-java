@@ -11,7 +11,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class FaceDetector implements IFaceDetector {
     public static final String OPENCV_DL_FACEDETECTOR = "OPENCV_DL_FACEDETECTOR";
-    public static final String FKE_FACEDETECTOR = "FKE_FACEDETECTOR";
+    public static final String OPENIMAJ_FKE_FACEDETECTOR = "OPENIMAJ_FKE_FACEDETECTOR";
     private opencv_dnn.Net model;
     private int image_width;
     private int image_height;
