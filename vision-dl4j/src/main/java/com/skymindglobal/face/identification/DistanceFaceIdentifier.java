@@ -17,12 +17,16 @@ public class DistanceFaceIdentifier extends FaceIdentifier {
     private final FaceFeatureProvider _FaceFeatureProvider;
     private final int numPredictions;
     private final double threshold;
+    private final int numSamples;
+    private int minSupport;
 
-    public DistanceFaceIdentifier(FaceFeatureProvider faceFeatureProvider, File classDict, int numPredictions, double threshold) throws IOException, ClassNotFoundException {
+    public DistanceFaceIdentifier(FaceFeatureProvider faceFeatureProvider, File classDict, int numPredictions, double threshold, int numSamples, int minSupport) throws IOException, ClassNotFoundException {
         this._FaceFeatureProvider = faceFeatureProvider;
         _FaceFeatureProvider.setupAnchor(classDict);
         this.numPredictions = numPredictions;
         this.threshold = threshold;
+        this.numSamples = numSamples;
+        this.minSupport = minSupport;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class DistanceFaceIdentifier extends FaceIdentifier {
 
             // predicts
             List<Prediction> predictions = _FaceFeatureProvider.predict(
-                    crop_image, faceLocalizations.get(i), this.numPredictions, this.threshold);
+                    crop_image, faceLocalizations.get(i), this.numPredictions, this.threshold, this.numSamples, this.minSupport);
             collection.add(predictions);
         }
         return collection;

@@ -92,7 +92,7 @@ public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
                 bx = bx+w;
                 by = by+w;
 
-                faceLocalizations.add(new FaceLocalization(tx, ty, bx, by));
+                faceLocalizations.add(new FaceLocalization(tx, ty, bx, by, null));
             }
         }
         return faceLocalizations;

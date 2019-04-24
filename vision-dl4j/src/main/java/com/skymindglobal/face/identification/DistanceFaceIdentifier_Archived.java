@@ -99,7 +99,7 @@ public class DistanceFaceIdentifier_Archived extends FaceIdentifier {
             List<Prediction> predictions = null;
             switch(prediction_mode){
                 case DistanceFaceIdentifier_Archived.EMBED_DISTANCE:
-                    predictions = _FaceFeatureProvider.predict(crop_image, faceLocalizations.get(i),10, 1.0);
+                    predictions = _FaceFeatureProvider.predict(crop_image, faceLocalizations.get(i),10, 0.8, 3, 3);
                     break;
 //                case DistanceFaceIdentifier.SIMILARITY_MODEL:
 //                    predictions = predictSimilarityModel(_image, faceLocalizations.get(i), 10, 0.5);

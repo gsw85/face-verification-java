@@ -43,7 +43,7 @@ public class OpenIMAJ_FKEFaceDetector extends FaceDetector {
                 float bx = i.getBounds().x + i.getBounds().width;
                 //bottom right point's y
                 float by = i.getBounds().y + i.getBounds().height;
-                faceLocalizations.add(new FaceLocalization(tx, ty, bx, by));
+                faceLocalizations.add(new FaceLocalization(tx, ty, bx, by, i.getKeypoints()));
             }
         }
         return faceLocalizations;
@@ -53,16 +53,45 @@ public class OpenIMAJ_FKEFaceDetector extends FaceDetector {
         FaceAligner<KEDetectedFace> aligner = new AffineAligner();
 
         List<BufferedImage> patches = new ArrayList<>();
+
         for(KEDetectedFace i : detectedFaces){
             FImage alignedFace = aligner.align(i);
+
+//            int x = (int) i.getBounds().x;
+//            if(x<0){
+//                x=0;
+//            }
+//            int y = (int) i.getBounds().y;
+//            if(y<0){
+//                y=0;
+//            }
+//
+//            int w = (int) i.getBounds().width;
+//            if(w+x>299){
+//                w=299;
+//            }
+//            int h = (int) i.getBounds().height;
+//            if(h+x>299){
+//                h=299;
+//            }
+//
+//            System.out.println(x +"-"+ y+"-"+ w+"-"+ h);
+//            System.out.println( alignedFace.width+"-"+alignedFace.height);
+//            patches.add(
+//                    ImageUtilities.createBufferedImage(
+//                            alignedFace,
+//                            frame.getSubimage(x,y,w,h)
+//                    )
+//            );
+
             patches.add(
                     ImageUtilities.createBufferedImage(
-                        alignedFace,
-                        frame.getSubimage(
-                                (int)i.getBounds().x,
-                                (int)i.getBounds().y,
-                                (int)i.getBounds().width,
-                                (int)i.getBounds().height
+                            alignedFace,
+                            frame.getSubimage(
+                                    (int)i.getBounds().x,
+                                    (int)i.getBounds().y,
+                                    (int)i.getBounds().width,
+                                    (int)i.getBounds().height
                             )
                     )
             );

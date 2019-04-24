@@ -1,16 +1,20 @@
 package com.skymindglobal.face.detection;
 
+import org.openimaj.image.processing.face.detection.keypoints.FacialKeypoint;
+
 public class FaceLocalization {
+    FacialKeypoint[] keypoints;
     float left_x;
     float left_y;
     float right_x;
     float right_y;
 
-    public FaceLocalization(float left_x, float left_y, float right_x, float right_y){
+    public FaceLocalization(float left_x, float left_y, float right_x, float right_y, FacialKeypoint[] keypoints){
         this.left_x = left_x;
         this.left_y = left_y;
         this.right_x = right_x;
         this.right_y = right_y;
+        this.keypoints = keypoints;
     }
 
     public int getValidWidth(int imageWidth) {
@@ -57,5 +61,9 @@ public class FaceLocalization {
 
     public float getRight_y(){
         return this.right_y;
+    }
+
+    public FacialKeypoint[] getKeyPoints() {
+        return this.keypoints;
     }
 }

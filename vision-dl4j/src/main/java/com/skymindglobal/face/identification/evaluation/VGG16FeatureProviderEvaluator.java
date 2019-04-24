@@ -9,7 +9,6 @@ import org.datavec.api.split.FileSplit;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.cpu.nativecpu.NDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 import org.slf4j.Logger;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,14 +31,14 @@ public class VGG16FeatureProviderEvaluator {
     private static int VGG16_WIDTH = 224;
     private static int CHANNEL = 3;
 
-    private static String CSV_FILE_NAME = new File(".").getAbsolutePath() + "/generated-models/vgg16_embedding_evaluation.csv";
+    private static String CSV_FILE_NAME = new File(".").getAbsolutePath() + "/generated-models/office.csv";
     private static List<String> labels;
     private static int batchSize = 64;
 
     public static void main(String[] args) throws IOException {
         _VGG16FeatureProvider = new VGG16FeatureProvider();
 
-        File dir = new File("D:\\Public_Data\\face_recog\\vgg16\\train_08_topN");
+        File dir = new File("D:\\Gits\\Vision\\vision-dl4j\\src\\main\\resources\\Office-Faces");
 
         ImageRecordReader recordReaderSource = new ImageRecordReader(VGG16_HEIGHT, VGG16_WIDTH, CHANNEL, new ParentPathLabelGenerator());
         recordReaderSource.initialize(new FileSplit(dir));

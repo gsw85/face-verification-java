@@ -103,7 +103,7 @@ public class FaceIDVideo {
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE:
                 File dictionary = new ClassPathResource("Office-Faces").getFile();
-                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary,3, 0.7);
+                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary,3, 0.8, 3, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:

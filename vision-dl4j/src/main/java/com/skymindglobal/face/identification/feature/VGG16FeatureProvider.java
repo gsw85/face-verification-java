@@ -2,6 +2,7 @@ package com.skymindglobal.face.identification.feature;
 
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.identification.Prediction;
+import com.skymindglobal.face.toolkit.MedianFinder;
 import org.bytedeco.javacpp.opencv_core;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
@@ -9,24 +10,21 @@ import org.datavec.image.loader.NativeImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.deeplearning4j.nn.transferlearning.TransferLearning;
-import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.model.VGG16;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
-import org.nd4j.linalg.factory.Nd4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 import static org.nd4j.linalg.ops.transforms.Transforms.cosineSim;
-import static org.nd4j.linalg.ops.transforms.Transforms.euclideanDistance;
 
 public class VGG16FeatureProvider extends FaceFeatureProvider {
     private static final Logger log = LoggerFactory.getLogger(VGG16FeatureProvider.class);
@@ -35,7 +33,6 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
     private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
     private ComputationGraph model;
     private static ArrayList<LabelFeaturePair> labelFeaturePairList = new ArrayList<>();
-    private static final String random_uuid = "c5cc2a8e-d630-42a6-91d8-54c3df95e05e";
 
     public VGG16FeatureProvider() throws IOException {
         model = (ComputationGraph) VGG16.builder().build().initPretrained(PretrainedType.VGGFACE);
@@ -82,7 +79,13 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
         return model.feedForward(arr, false).get("fc8");
     }
 
-    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold) throws IOException {
+    public static IntStream reverseOrderStream(IntStream intStream) {
+        int[] tempArray = intStream.toArray();
+        return IntStream.range(1, tempArray.length + 1).boxed()
+                .mapToInt(i -> tempArray[tempArray.length - i]);
+    }
+
+    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples, int minSupport) throws IOException {
         NativeImageLoader nativeImageLoader = new NativeImageLoader();
         resize(image, image, new opencv_core.Size(224, 224));
         INDArray _image = nativeImageLoader.asMatrix(image);
@@ -100,11 +103,40 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
         for (final Map.Entry<String, List<Prediction>> entry : map.entrySet()) {
 //            final double max = entry.getValue().stream()
 //                    .mapToDouble(p -> p.getScore()).max().getAsDouble();
-            final double topNAvg = entry.getValue().stream()
-                    .mapToDouble(p -> p.getScore()).sorted().limit(3).average().getAsDouble();
-            if(topNAvg > threshold) {
+
+            if(entry.getValue().size() < minSupport){
+                continue;
+            }
+
+            double topNAvg = reverseOrderStream(entry
+                    .getValue()
+                    .stream()
+                    .mapToInt(p -> (int) (p.getScore() * 10000))
+                    .sorted()
+            )
+                    .limit(numSamples)
+                    .mapToDouble(num -> (double) num / 10000)
+                    .average()
+                    .getAsDouble();
+            if(topNAvg >= threshold) {
                 summary.add(new Prediction(entry.getKey(), topNAvg, faceLocalization));
             }
+
+            // median
+//            MedianFinder _MedianFinder = new MedianFinder();
+//            entry.getValue().stream().forEach(p -> _MedianFinder.addNum(p.getScore()));
+//            if(_MedianFinder.findMedian() >= threshold) {
+//                summary.add(new Prediction(entry.getKey(), _MedianFinder.findMedian(), faceLocalization));
+//            }
+
+            // troubleshooting
+//            IntStream test = reverseOrderStream(entry.getValue().stream().mapToInt(p -> (int) (p.getScore() * 10000)).sorted());
+//            System.out.println("records");
+//            test.forEach(x->System.out.println(x));
+//            test = reverseOrderStream(entry.getValue().stream().mapToInt(p -> (int) (p.getScore() * 10000)).sorted()).limit(numSamples);
+//            System.out.println("limits");
+//            test.forEach(x->System.out.println(x));
+//            log.info(String.valueOf(topNAvg));
         }
 
         // sort and select top N

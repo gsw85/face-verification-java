@@ -17,11 +17,11 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class FaceDatasetPreperation {
-    private static String lfwSource = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office";
-    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_train_08_topN";
-    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\vgg16\\samples_lfw_and_office_test_08_topN";
-    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\vgg16\\train_08_topN";
-    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\vgg16\\test_08_topN";
+    private static String lfwSource = "D:\\Public_Data\\face_recog\\office_faces";
+    private static String imageSourceTrain = "D:\\Public_Data\\face_recog\\office_faces_train10";
+    private static String imageSourceTest = "D:\\Public_Data\\face_recog\\office_faces_test10";
+    private static String imageSourceTrainCropped = "D:\\Public_Data\\face_recog\\office_faces_train_crop10";
+    private static String imageSourceTestCropped = "D:\\Public_Data\\face_recog\\office_faces_test_crop10";
     private static int seed = 123;
     private static int trainPerc = 100;
     private static int minSamples = 10;
