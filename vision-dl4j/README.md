@@ -27,6 +27,8 @@ Kindly Execute `/vision-dl4j/com/skymindglobal/face/FaceID` for realtime inferen
     - detectionThreshold: 0.78
     - numSamples: 3
       Average of top 3 per class.
+    - minSupport (deprecated)
+      Minimum samples in dictionary per class.
     
 ### Dataset Preparation
 - Using FaceIdentifier.FEATURE_DISTANCE
