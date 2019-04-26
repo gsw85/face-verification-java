@@ -22,15 +22,11 @@ Kindly Execute `/vision-dl4j/com/skymindglobal/face/FaceID` for realtime inferen
   - Identification based on cosine similarity between images in dictionary and image from webcam.
   - [Configuration](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/FaceID.java#L133)
     - Embeddings Provider (default: `VGG16FeatureProvider`)
-    - Dictionary (default: resources `\vgg16_faces_224`)
-      Directory of detection targets 
-    - numPredicts: 1
-      Number of predictions to be display.
+    - Dictionary (default: resources `\vgg16_faces_224`): Directory of detection targets 
+    - numPredicts: 1 (Number of predictions to be display)
     - detectionThreshold: 0.78
-    - numSamples: 3
-      Average of top 3 per class.
-    - minSupport (deprecated)
-      Minimum samples in dictionary per class.
+    - numSamples: 3 (Average of top 3 per class)
+    - minSupport (deprecated): 3 (Minimum samples in dictionary per class)
   - Resources:
     - `\vgg16_faces_224`
       - `person A`
