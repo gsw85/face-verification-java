@@ -35,7 +35,6 @@ public class FaceDatasetPreperation {
     }
 
     public static void listFilesForFolder(final File folder, String imageSourceCropped) throws IOException {
-        int counter = 0;
         for (final File fileEntry : folder.listFiles()) {
             log.info(fileEntry.getAbsolutePath());
             if (fileEntry.isDirectory()) {
@@ -43,7 +42,6 @@ public class FaceDatasetPreperation {
             } else {
                 String target = imageSourceCropped + "\\" + folder.getName() + '\\' + fileEntry.getName();
                 detectFacesAndSave(fileEntry.getAbsolutePath(), target);
-                counter++;
             }
         }
     }
