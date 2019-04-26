@@ -32,13 +32,13 @@ Kindly Execute `/vision-dl4j/com/skymindglobal/face/FaceID` for realtime inferen
     - minSupport (deprecated)
       Minimum samples in dictionary per class.
   - Resources:
-    `\vgg16_faces_224`
-        `person A`
-            `face1.jpg`
-            `face2.jpg`
-        `person B`
-            `face1.jpg`
-            `face2.jpg`
+    - `\vgg16_faces_224`
+      - `person A`
+        - `face1.jpg`
+        - `face2.jpg`
+      - `person B`
+        - `face1.jpg`
+        - `face2.jpg`
     
 ### Dataset Preparation
 - Using FaceIdentifier.FEATURE_DISTANCE
