@@ -37,5 +37,4 @@ Kindly Execute `/vision-dl4j/com/skymindglobal/face/FaceID` for realtime inferen
         - `face2.jpg`
     
 ### Dataset Preparation
-- Using FaceIdentifier.FEATURE_DISTANCE
-May invoke [FaceDatasetPreperation](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/identification/training/FaceDatasetPreperation.java) to generate detection targets face images and load into `\vgg16_faces_224` resource directory.
+- Using FaceIdentifier.FEATURE_DISTANCE: May invoke [FaceDatasetPreperation](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/identification/training/FaceDatasetPreperation.java) to generate detection targets face images and load into `\vgg16_faces_224` resource directory.
