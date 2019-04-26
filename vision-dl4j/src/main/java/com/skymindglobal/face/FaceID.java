@@ -6,7 +6,6 @@ import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
 import com.skymindglobal.face.identification.*;
 import com.skymindglobal.face.identification.feature.VGG16FeatureProvider;
-import com.skymindglobal.face.pose.*;
 import com.skymindglobal.face.pose.HeadPoseEstimator;
 import com.skymindglobal.face.pose.KerasModel_HeadPoseEstimator;
 import com.skymindglobal.face.pose.OpenCV_HeadPoseEstimator;
@@ -130,7 +129,7 @@ public class FaceID {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE:
-                File dictionary = new ClassPathResource("Office-Faces").getFile();
+                File dictionary = new ClassPathResource("vgg16_faces_224").getFile();
                 return new DistanceFaceIdentifier(
                         new VGG16FeatureProvider(), dictionary, 1, 0.78, 3, 3);
             case FaceIdentifier.ZHZD:

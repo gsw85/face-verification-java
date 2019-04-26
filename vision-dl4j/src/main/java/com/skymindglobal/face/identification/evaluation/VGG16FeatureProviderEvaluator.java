@@ -38,7 +38,7 @@ public class VGG16FeatureProviderEvaluator {
     public static void main(String[] args) throws IOException {
         _VGG16FeatureProvider = new VGG16FeatureProvider();
 
-        File dir = new File("D:\\Gits\\Vision\\vision-dl4j\\src\\main\\resources\\Office-Faces");
+        File dir = new File("D:\\Gits\\Vision\\vision-dl4j\\src\\main\\resources\\vgg16_faces_224");
 
         ImageRecordReader recordReaderSource = new ImageRecordReader(VGG16_HEIGHT, VGG16_WIDTH, CHANNEL, new ParentPathLabelGenerator());
         recordReaderSource.initialize(new FileSplit(dir));
