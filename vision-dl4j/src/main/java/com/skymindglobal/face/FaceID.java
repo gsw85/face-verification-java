@@ -33,8 +33,8 @@ import java.util.List;
 
 public class FaceID {
     private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-    private static final int WIDTH = 1280;//1920;
-    private static final int HEIGHT = 720;//1080;
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1080;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
@@ -132,7 +132,7 @@ public class FaceID {
             case FaceIdentifier.FEATURE_DISTANCE:
                 File dictionary = new ClassPathResource("Office-Faces").getFile();
                 return new DistanceFaceIdentifier(
-                        new VGG16FeatureProvider(), dictionary, 3, 0.8, 3, 3);
+                        new VGG16FeatureProvider(), dictionary, 1, 0.78, 3, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:
@@ -145,7 +145,7 @@ public class FaceID {
             case FaceDetector.OPENCV_DL_FACEDETECTOR:
                 return new OpenCV_DeepLearningFaceDetector(300, 300, 0.8);
             case FaceDetector.OPENIMAJ_FKE_FACEDETECTOR:
-                return new OpenIMAJ_FKEFaceDetector( 0.6);
+                return new OpenIMAJ_FKEFaceDetector( 1.0);
             default:
                 return null;
         }
@@ -156,13 +156,12 @@ public class FaceID {
             rectangle(image,new opencv_core.Rect(new opencv_core.Point((int) i.getLeft_x(),(int) i.getLeft_y()), new opencv_core.Point((int) i.getRight_x(),(int) i.getRight_y())), new opencv_core.Scalar(255, 0, 0, 0));
 
             if(i.getKeyPoints() != null){
-                FacialKeypoint[] keypoints = i.getKeyPoints();
-                for (FacialKeypoint x : keypoints){
+                for (FacialKeypoint x : i.getKeyPoints()){
                     circle(
                             image,
                             new Point(
-                                    (int)x.position.x + (int)i.getLeft_x(),
-                                    (int)x.position.y + (int)i.getLeft_y()
+                                    (int)(x.position.x+i.getLeft_x()),
+                                    (int)(x.position.y+i.getLeft_y())
                             ),
                             2,
                             new opencv_core.Scalar(255, 0, 0, 0),
