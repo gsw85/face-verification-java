@@ -37,7 +37,7 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.face.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.FEATURE_DISTANCE);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.face.identification.FaceIdentifier.FEATURE_DISTANCE_VGG16);
         HeadPoseEstimator HeadPoseEstimator = getHeadPoseEstimator(OPENCV_HEAD_POSE_ESTIMATOR);
 
         VideoCapture capture = new VideoCapture();
@@ -128,10 +128,9 @@ public class FaceID {
         switch (faceIdentifier){
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
-            case FaceIdentifier.FEATURE_DISTANCE:
+            case FaceIdentifier.FEATURE_DISTANCE_VGG16:
                 File dictionary = new ClassPathResource("vgg16_faces_224").getFile();
-                return new DistanceFaceIdentifier(
-                        new VGG16FeatureProvider(), dictionary, 1, 0.78, 3, 3);
+                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary, 1, 0.78, 3, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:

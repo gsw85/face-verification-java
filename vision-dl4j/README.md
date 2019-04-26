@@ -5,17 +5,19 @@ Kindly Execute `/vision-dl4j/com/skymindglobal/face/FaceID` for realtime inferen
 
 ### Face Detection
 - FaceDetector.OPENCV_DL_FACEDETECTOR (default)
-  - Description: OpenCV with prebuilt caffe face detection model
+  - OpenCV with prebuilt caffe face detection model
   - [Configuration](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/FaceID.java#L145):
     - Model inputs: Width and Height
-    - Confidence
+    - Threshold
   - Resource: `OpenCVDeepLearningFaceDetector\res10_300x300_ssd_iter_140000.caffemodel` and `OpenCVDeepLearningFaceDetector\deploy.prototxt`
-
 - FaceDetector.OPENIMAJ_FKE_FACEDETECTOR
+  - OpenIMAJ FKEFaceDetector
+  - Configuration
+    - Threshold
 
 ### Face Identification
-- FaceIdentifier.FEATURE_DISTANCE
-  - Description: 
+- FaceIdentifier.FEATURE_DISTANCE_VGG16
+  - Identification based on cosine similarity between images in dictionary and image from webcam.
   - [Configuration](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/FaceID.java#L133)
     - Embeddings Provider (default: `VGG16FeatureProvider`)
     - Dictionary (default: resources `\vgg16_faces_224`)
@@ -25,7 +27,6 @@ Kindly Execute `/vision-dl4j/com/skymindglobal/face/FaceID` for realtime inferen
     - detectionThreshold: 0.78
     - numSamples: 3
       Average of top 3 per class.
-    
     
 ### Dataset Preparation
 - Using FaceIdentifier.FEATURE_DISTANCE

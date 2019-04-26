@@ -101,7 +101,7 @@ public class FaceIDVideo {
         switch (faceIdentifier){
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
-            case FaceIdentifier.FEATURE_DISTANCE:
+            case FaceIdentifier.FEATURE_DISTANCE_VGG16:
                 File dictionary = new ClassPathResource("vgg16_faces_224").getFile();
                 return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary,3, 0.8, 3, 3);
             case FaceIdentifier.ZHZD:
