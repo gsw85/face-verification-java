@@ -32,6 +32,7 @@ public class Prediction {
     }
 
     public String toString() {
-        return String.format("%s: %.2f ", this.label, this.score);
+//        return String.format("%s: %.2f ", this.label, this.score);
+        return String.format("%s", this.label);
     }
 }

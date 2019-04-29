@@ -1,23 +1,17 @@
 package com.skymindglobal.face;
 
-import com.skymindglobal.face.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.face.detection.FaceDetector;
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.detection.OpenCV_DeepLearningFaceDetector;
+import com.skymindglobal.face.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.face.identification.*;
+import com.skymindglobal.face.identification.feature.FaceNetFeatureProvider;
 import com.skymindglobal.face.identification.feature.VGG16FeatureProvider;
 import com.skymindglobal.face.pose.HeadPoseEstimator;
 import com.skymindglobal.face.pose.KerasModel_HeadPoseEstimator;
 import com.skymindglobal.face.pose.OpenCV_HeadPoseEstimator;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
-
-import static com.skymindglobal.face.pose.HeadPoseEstimator.KERAS_MODEL;
-import static com.skymindglobal.face.pose.HeadPoseEstimator.OPENCV_HEAD_POSE_ESTIMATOR;
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
-import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_HEIGHT;
-import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_WIDTH;
 import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
@@ -26,9 +20,16 @@ import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfig
 import org.nd4j.linalg.io.ClassPathResource;
 import org.openimaj.image.processing.face.detection.keypoints.FacialKeypoint;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import static com.skymindglobal.face.pose.HeadPoseEstimator.KERAS_MODEL;
+import static com.skymindglobal.face.pose.HeadPoseEstimator.OPENCV_HEAD_POSE_ESTIMATOR;
+import static org.bytedeco.javacpp.opencv_core.FONT_HERSHEY_PLAIN;
+import static org.bytedeco.javacpp.opencv_core.Point;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_HEIGHT;
+import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_WIDTH;
 
 public class FaceID {
     private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
@@ -84,7 +85,7 @@ public class FaceID {
                 mainframe.showImage(converter.convert(image));
 
                 try {
-                    Thread.sleep(50); //50
+                    Thread.sleep(40); //50
                 } catch (InterruptedException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -122,6 +123,7 @@ public class FaceID {
                 );
             }
         }
+
     }
 
     private static FaceIdentifier getFaceIdentifier(String faceIdentifier) throws IOException, ClassNotFoundException {
@@ -129,10 +131,15 @@ public class FaceID {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE_VGG16:
-                File dictionary = new ClassPathResource("vgg16_faces_224").getFile();
-                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary, 1, 0.78, 3, 3);
+                return new DistanceFaceIdentifier(
+                        new VGG16FeatureProvider(),
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.78, 3, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
+            case FaceIdentifier.FACENET_PREBUILT:
+                return new DistanceFaceIdentifier(
+                        new FaceNetFeatureProvider(),
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.75, 3, 3);
             default:
                 return null;
         }

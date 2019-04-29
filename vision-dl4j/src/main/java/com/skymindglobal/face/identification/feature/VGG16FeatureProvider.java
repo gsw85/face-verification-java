@@ -2,7 +2,6 @@ package com.skymindglobal.face.identification.feature;
 
 import com.skymindglobal.face.detection.FaceLocalization;
 import com.skymindglobal.face.identification.Prediction;
-import com.skymindglobal.face.toolkit.MedianFinder;
 import org.bytedeco.javacpp.opencv_core;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
@@ -18,7 +17,8 @@ import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,9 +28,6 @@ import static org.nd4j.linalg.ops.transforms.Transforms.cosineSim;
 
 public class VGG16FeatureProvider extends FaceFeatureProvider {
     private static final Logger log = LoggerFactory.getLogger(VGG16FeatureProvider.class);
-
-    private static final int channels = 3;
-    private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
     private ComputationGraph model;
     private static ArrayList<LabelFeaturePair> labelFeaturePairList = new ArrayList<>();
 
@@ -40,7 +37,7 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
     }
 
     public ArrayList<LabelFeaturePair> setupAnchor(File dictionary) throws IOException, ClassNotFoundException {
-        ImageRecordReader recordReader = new ImageRecordReader(224, 224, channels, labelMaker);
+        ImageRecordReader recordReader = new ImageRecordReader(224, 224, 3, new ParentPathLabelGenerator());
         recordReader.initialize(new FileSplit(dictionary));
         RecordReaderDataSetIterator iter = new RecordReaderDataSetIterator(recordReader, 1, 1, dictionary.listFiles().length);
         List<String> labels = iter.getLabels();
