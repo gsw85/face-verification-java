@@ -214,8 +214,6 @@ public class SameOrNotClassifier {
                 .addLayer("l4", new DenseLayer.Builder().nIn(32).nOut(32).activation(Activation.RELU).build(), "b2")
                 .addLayer("output", new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD).nIn(32).nOut(2).activation(Activation.SOFTMAX).build(), "l4")
                 .setOutputs("output")
-                .pretrain(false)
-                .backprop(true)
                 .build();
         return conf;
     }

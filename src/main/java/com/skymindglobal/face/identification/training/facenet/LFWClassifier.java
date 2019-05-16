@@ -188,8 +188,6 @@ public class LFWClassifier {
                 .addLayer("l8", new DenseLayer.Builder().nIn(16).nOut(8).activation(Activation.LEAKYRELU).build(), "b4")
                 .addLayer("output", new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD).nIn(8).nOut(nClasses).activation(Activation.SOFTMAX).build(), "l8")
                 .setOutputs("output")
-                .pretrain(false)
-                .backprop(true)
                 .build();
         return conf;
     }
