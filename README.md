@@ -6,7 +6,7 @@ Kindly Execute `/com/skymindglobal/face/FaceID` for realtime inferencing.
 ### Face Detection
 - FaceDetector.OPENCV_DL_FACEDETECTOR (default)
   - OpenCV with prebuilt caffe face detection model
-  - [Configuration](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/FaceID.java#L145):
+  - [Configuration](https://github.com/skymindglobal/Vision/blob/master/src/main/java/com/skymindglobal/face/FaceID.java#L145):
     - Model inputs: Width and Height
     - Threshold
   - Resources:
@@ -20,7 +20,7 @@ Kindly Execute `/com/skymindglobal/face/FaceID` for realtime inferencing.
 ### Face Identification
 - FaceIdentifier.FEATURE_DISTANCE_VGG16
   - Identification based on cosine similarity between images in dictionary and image from webcam.
-  - [Configuration](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/FaceID.java#L133)
+  - [Configuration](https://github.com/skymindglobal/Vision/blob/master/src/main/java/com/skymindglobal/face/FaceID.java#L133)
     - Embeddings Provider (default: `VGG16FeatureProvider`)
     - Dictionary (default: resources `\vgg16_faces_224`): Directory of detection targets 
     - numPredicts: 1 (Number of predictions to be display)
@@ -37,4 +37,4 @@ Kindly Execute `/com/skymindglobal/face/FaceID` for realtime inferencing.
         - `face2.jpg`
     
 ### Dataset Preparation
-- Using FaceIdentifier.FEATURE_DISTANCE: May invoke [FaceDatasetPreperation](https://github.com/skymindglobal/Vision/blob/master/vision-dl4j/src/main/java/com/skymindglobal/face/identification/training/FaceDatasetPreperation.java) to generate detection targets face images and load into `\vgg16_faces_224` resource directory.
+- Using FaceIdentifier.FEATURE_DISTANCE: May invoke [FaceDatasetPreperation](https://github.com/skymindglobal/Vision/blob/master/src/main/java/com/skymindglobal/face/identification/training/FaceDatasetPreperation.java) to generate detection targets face images and load into `\vgg16_faces_224` resource directory.
