@@ -38,7 +38,7 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.faceverification.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_VGG16);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT);
 
         // head pose estimation is still in development, kindly ignore
         HeadPoseEstimator HeadPoseEstimator = getHeadPoseEstimator(OPENCV_HEAD_POSE_ESTIMATOR);
@@ -129,19 +129,19 @@ public class FaceID {
     }
 
     private static FaceIdentifier getFaceIdentifier(String faceIdentifier) throws IOException, ClassNotFoundException {
-        switch (faceIdentifier){
+        switch (faceIdentifier) {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
-            case FaceIdentifier.FEATURE_DISTANCE_VGG16:
+            case FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT:
                 return new DistanceFaceIdentifier(
                         new VGG16FeatureProvider(),
-                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.78, 3, 3);
-            case FaceIdentifier.ZHZD:
-                return new AlexNetFaceIdentifier(5);
-            case FaceIdentifier.FACENET_PREBUILT:
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.78, 3);
+            case FaceIdentifier.FEATURE_DISTANCE_FACENET_PREBUILT:
                 return new DistanceFaceIdentifier(
                         new FaceNetFeatureProvider(),
-                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.75, 3, 3);
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.75, 3);
+            case FaceIdentifier.ZHZD:
+                return new AlexNetFaceIdentifier(5);
             default:
                 return null;
         }

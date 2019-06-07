@@ -23,7 +23,7 @@ public class FaceFeatureProvider implements IFaceFeatureProvider {
         return null;
     }
 
-    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples, int minSupport) throws IOException {
+    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples) throws IOException {
         return null;
     }
 

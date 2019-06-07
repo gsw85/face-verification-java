@@ -29,7 +29,7 @@ public class FaceIDVideo {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.faceverification.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.ZHZD);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT);
 
         String videoPath = "C:\\Users\\PK Chuah\\Videos\\Captures\\sample.mp4";
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoPath);
@@ -101,9 +101,9 @@ public class FaceIDVideo {
         switch (faceIdentifier){
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
-            case FaceIdentifier.FEATURE_DISTANCE_VGG16:
+            case FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT:
                 File dictionary = new ClassPathResource("vgg16_faces_224").getFile();
-                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary,3, 0.8, 3, 3);
+                return new DistanceFaceIdentifier(new VGG16FeatureProvider(), dictionary,3, 0.8, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:

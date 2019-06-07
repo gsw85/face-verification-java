@@ -25,8 +25,8 @@ public class VGG16FaceIdentifier extends FaceIdentifier {
     // labels - model's classes
     private static String[] labels;
     private ComputationGraph model = null;
-    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/vgg16_faceid_v13.zip";
-    private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/vgg16_faceid_v13.lbl";
+    private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/vgg16.zip";
+    private static String labelFilename = new File(".").getAbsolutePath() + "/generated-models/vgg16.lbl";
     public static final int VGG16_INPUT_WIDTH = 224;
     public static final int VGG16_INPUT_HEIGHT = 224;
     private int numPrediction;

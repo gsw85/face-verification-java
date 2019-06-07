@@ -1,32 +1,29 @@
 # Face Identification Prototypes (DL4J, OpenIMEJ, JavaCV and more)
 
 ## FaceID
-Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/face/FaceID.java) for realtime inferencing.
+Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java) for realtime inferencing.
 
 ### Face Detection
-- FaceDetector.OPENCV_DL_FACEDETECTOR (default)
-  - OpenCV with prebuilt caffe face detection model
-  - [Configuration](https://github.com/skymindglobal/Vision/blob/master/src/main/java/com/skymindglobal/face/FaceID.java#L145):
-    - Model inputs: Width and Height
-    - Threshold
+- `FaceDetector.OPENCV_DL_FACEDETECTOR` (default): OpenCV with prebuilt caffe face detection model
+  - [Configuration](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java#L152):
+    - `imageWidth:300`
+    - `imageHeight:300`
+    - `detectionThreshold:0.8`
   - Resources:
     - `OpenCVDeepLearningFaceDetector\res10_300x300_ssd_iter_140000.caffemodel`
     - `OpenCVDeepLearningFaceDetector\deploy.prototxt`
-- FaceDetector.OPENIMAJ_FKE_FACEDETECTOR
-  - OpenIMAJ FKEFaceDetector
+- `FaceDetector.OPENIMAJ_FKE_FACEDETECTOR`: OpenIMAJ's FKEFaceDetector
   - Configuration
-    - Threshold
+    - `detectionThreshold:1.0`
 
 ### Face Identification
-- FaceIdentifier.FEATURE_DISTANCE_VGG16
-  - Identification based on cosine similarity between images in dictionary and image from webcam.
-  - [Configuration](https://github.com/skymindglobal/Vision/blob/master/src/main/java/com/skymindglobal/face/FaceID.java#L133)
-    - Embeddings Provider (default: `VGG16FeatureProvider`)
-    - Dictionary (default: resources `\vgg16_faces_224`): Directory of detection targets 
-    - numPredicts: 1 (Number of predictions to be display)
-    - detectionThreshold: 0.78
-    - numSamples: 3 (Average of top 3 per class)
-    - minSupport (deprecated): 3 (Minimum samples in dictionary per class)
+- `FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT`: Identification by highest cosine similarity between webcam image and target embeddings (prebuilt VGG16 model with VGGFACE dataset, layer `fc8` as features).
+  - [Configuration](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java#L135)
+    - `FaceFeatureProvider:VGG16FeatureProvider`
+    - `dictDir: resources \vgg16_faces_224` detection target faces.
+    - `numPredicts:1` number of predictions
+    - `detectionThreshold:0.78`
+    - `numSamples:3` average of top 3 per class
   - Resources:
     - `\vgg16_faces_224`
       - `person A`
@@ -35,6 +32,10 @@ Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/b
       - `person B`
         - `face1.jpg`
         - `face2.jpg`
-    
+- `FaceIdentifier.CUSTOM_VGG16`: Identification by inference self trained model (may refer [training steps](https://github.com/skymindglobal/faceverification-java/tree/master/src/main/java/com/skymindglobal/faceverification_training/identification/VGG16FaceIdentifier/VGG16Classifier.java))
+  - Configuration
+    - `numPrediction:3`
+- `FaceIdentifier.FEATURE_DISTANCE_FACENET_PREBUILT` (not stable): Identification by highest cosine similarity between webcam image and target embeddings (prebuilt [InceptionResNetv1](https://github.com/davidsandberg/facenet) model  deployed on SKIL).
+- `FaceIdentifier.ZHZD`: Identification by inference model trained by zhzd@skymind.cc, mainly for testing purposes.
 ### Dataset Preparation
-- Using FaceIdentifier.FEATURE_DISTANCE: May invoke [FaceDatasetPreperation](https://github.com/skymindglobal/Vision/blob/master/src/main/java/com/skymindglobal/face/identification/training/FaceDatasetPreperation.java) to generate detection targets face images and load into `\vgg16_faces_224` resource directory.
+- Using FaceIdentifier.FEATURE_DISTANCE: kindly invoke [VGG16FaceDatasetPreperation.java](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/VGG16FaceDatasetPreperation.java) to extract detection targets face images and load into `\vgg16_faces_224` resource directory.
