@@ -7,9 +7,6 @@ import com.skymindglobal.faceverification.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.faceverification.identification.*;
 import com.skymindglobal.faceverification.identification.feature.FaceNetFeatureProvider;
 import com.skymindglobal.faceverification.identification.feature.VGG16FeatureProvider;
-import com.skymindglobal.faceverification.pose.HeadPoseEstimator;
-import com.skymindglobal.faceverification.pose.KerasModel_HeadPoseEstimator;
-import com.skymindglobal.faceverification.pose.OpenCV_HeadPoseEstimator;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
@@ -23,8 +20,6 @@ import org.openimaj.image.processing.face.detection.keypoints.FacialKeypoint;
 import java.io.IOException;
 import java.util.List;
 
-import static com.skymindglobal.faceverification.pose.HeadPoseEstimator.KERAS_MODEL;
-import static com.skymindglobal.faceverification.pose.HeadPoseEstimator.OPENCV_HEAD_POSE_ESTIMATOR;
 import static org.bytedeco.javacpp.opencv_core.FONT_HERSHEY_PLAIN;
 import static org.bytedeco.javacpp.opencv_core.Point;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
@@ -39,9 +34,6 @@ public class FaceID {
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.faceverification.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
         FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT);
-
-        // head pose estimation is still in development, kindly ignore
-        HeadPoseEstimator HeadPoseEstimator = getHeadPoseEstimator(OPENCV_HEAD_POSE_ESTIMATOR);
 
         VideoCapture capture = new VideoCapture();
         capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);
@@ -80,10 +72,6 @@ public class FaceID {
                 List<List<Prediction>> faceIdentities = FaceIdentifier.identify(faceLocalizations, cloneCopy);
                 labelIndividual(faceIdentities, image);
 
-//                // head pose estimation
-//                image.copyTo(cloneCopy);
-//                HeadPoseEstimator.estimate(null, cloneCopy);
-
                 mainframe.showImage(converter.convert(image));
 
                 try {
@@ -92,17 +80,6 @@ public class FaceID {
                     System.out.println(ex.getMessage());
                 }
             }
-        }
-    }
-
-    private static HeadPoseEstimator getHeadPoseEstimator(String HeadPoseEstimator) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
-        switch(HeadPoseEstimator){
-            case OPENCV_HEAD_POSE_ESTIMATOR:
-                return new OpenCV_HeadPoseEstimator();
-            case KERAS_MODEL:
-                return new KerasModel_HeadPoseEstimator();
-            default:
-                return null;
         }
     }
 
