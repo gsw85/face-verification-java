@@ -1,7 +1,7 @@
 # Face Identification Prototypes (DL4J, OpenIMEJ, JavaCV and more)
 
 ## FaceID
-Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java) for realtime inferencing.
+Kindly execute [FaceID](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java) for realtime inferencing.
 
 ### Face Detection
 - `FaceDetector.OPENCV_DL_FACEDETECTOR` (default): OpenCV with prebuilt caffe face detection model
@@ -25,13 +25,15 @@ Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/b
     - `detectionThreshold:0.78`
     - `numSamples:3` average of top 3 per class
   - Resources:
-    - `\vgg16_faces_224`
-      - `person A`
-        - `face1.jpg`
-        - `face2.jpg`
-      - `person B`
-        - `face1.jpg`
-        - `face2.jpg`
+    ```
+    \vgg16_faces_224
+      \person A
+        \face1.jpg
+        \face2.jpg
+      \person B
+        \face1.jpg
+        \face2.jpg
+    ```
 - `FaceIdentifier.CUSTOM_VGG16`: Identification by inference self trained model (may refer [training steps](https://github.com/skymindglobal/faceverification-java/tree/master/src/main/java/com/skymindglobal/faceverification_training/identification/VGG16FaceIdentifier/VGG16Classifier.java))
   - Configuration
     - `numPrediction:3`
