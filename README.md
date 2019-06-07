@@ -5,7 +5,7 @@ Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/b
 
 ### Face Detection
 - `FaceDetector.OPENCV_DL_FACEDETECTOR` (default): OpenCV with prebuilt caffe face detection model
-  - [Configuration](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java#L152):
+  - [Configuration](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java#L151):
     - `imageWidth:300`
     - `imageHeight:300`
     - `detectionThreshold:0.8`
@@ -18,7 +18,7 @@ Kindly Execute [FaceID](https://github.com/skymindglobal/faceverification-java/b
 
 ### Face Identification
 - `FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT`: Identification by highest cosine similarity between webcam image and target embeddings (prebuilt VGG16 model with VGGFACE dataset, layer `fc8` as features).
-  - [Configuration](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java#L135)
+  - [Configuration](https://github.com/skymindglobal/faceverification-java/blob/master/src/main/java/com/skymindglobal/faceverification/FaceID.java#L134-L136)
     - `FaceFeatureProvider:VGG16FeatureProvider`
     - `dictDir: resources \vgg16_faces_224` detection target faces.
     - `numPredicts:1` number of predictions
