@@ -10,8 +10,11 @@ Kindly execute [FaceID](https://github.com/skymindglobal/faceverification-java/b
     - `imageHeight:300`
     - `detectionThreshold:0.8`
   - Resources:
-    - `OpenCVDeepLearningFaceDetector\res10_300x300_ssd_iter_140000.caffemodel`
-    - `OpenCVDeepLearningFaceDetector\deploy.prototxt`
+    ```
+    \OpenCVDeepLearningFaceDetector
+      \res10_300x300_ssd_iter_140000.caffemodel
+      \deploy.prototxt
+    ```
 - `FaceDetector.OPENIMAJ_FKE_FACEDETECTOR`: OpenIMAJ's FKEFaceDetector
   - Configuration
     - `detectionThreshold:1.0`
