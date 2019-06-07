@@ -98,10 +98,8 @@ public class FaceID {
     private static HeadPoseEstimator getHeadPoseEstimator(String HeadPoseEstimator) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         switch(HeadPoseEstimator){
             case OPENCV_HEAD_POSE_ESTIMATOR:
-                // not stable
                 return new OpenCV_HeadPoseEstimator();
             case KERAS_MODEL:
-                // not stable
                 return new KerasModel_HeadPoseEstimator();
             default:
                 return null;

@@ -82,7 +82,7 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
                 .mapToInt(i -> tempArray[tempArray.length - i]);
     }
 
-    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples, int minSupport) throws IOException {
+    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples) throws IOException {
         NativeImageLoader nativeImageLoader = new NativeImageLoader();
         resize(image, image, new opencv_core.Size(224, 224));
         INDArray _image = nativeImageLoader.asMatrix(image);
@@ -100,10 +100,6 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
         for (final Map.Entry<String, List<Prediction>> entry : map.entrySet()) {
 //            final double max = entry.getValue().stream()
 //                    .mapToDouble(p -> p.getScore()).max().getAsDouble();
-
-            if(entry.getValue().size() < minSupport){
-                continue;
-            }
 
             double topNAvg = reverseOrderStream(entry
                     .getValue()
