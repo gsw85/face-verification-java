@@ -1,7 +1,9 @@
 package com.skymindglobal.faceverification.identification;
 
 import com.skymindglobal.faceverification.detection.FaceLocalization;
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class AlexNetFaceIdentifier extends FaceIdentifier {
     private static final Logger log = LoggerFactory.getLogger(AlexNetFaceIdentifier.class);
@@ -85,7 +87,7 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
     }
 
     @Override
-    public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, opencv_core.Mat image) throws IOException {
+    public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, Mat image) throws IOException {
 
         NativeImageLoader nativeImageLoader = new NativeImageLoader();
         List<List<Prediction>> collection = new ArrayList<>();
@@ -97,8 +99,8 @@ public class AlexNetFaceIdentifier extends FaceIdentifier {
             int Height = faceLocalizations.get(i).getValidHeight(image.size().height());
 
             // Crop face, Resize and convert into INDArr
-            opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
-            resize(crop_image, crop_image, new opencv_core.Size(HEIGHT, WIDTH));
+            Mat crop_image = new Mat(image, new Rect(X, Y, Width, Height));
+            resize(crop_image, crop_image, new Size(HEIGHT, WIDTH));
             INDArray _image = nativeImageLoader.asMatrix(crop_image);
 
             _DataNormalization.transform(_image);

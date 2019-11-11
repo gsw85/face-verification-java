@@ -2,7 +2,9 @@ package com.skymindglobal.faceverification.identification;
 
 import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.common.LabelManager;
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.util.ModelSerializer;
@@ -16,8 +18,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_dnn.blobFromImage;
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class VGG16FaceIdentifier extends FaceIdentifier {
     private static final Logger log = LoggerFactory.getLogger(VGG16FaceIdentifier.class);
@@ -47,7 +48,7 @@ public class VGG16FaceIdentifier extends FaceIdentifier {
     }
 
     @Override
-    public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, opencv_core.Mat image) throws IOException {
+    public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, Mat image) throws IOException {
 
         NativeImageLoader nativeImageLoader = new NativeImageLoader();
         List<List<Prediction>> collection = new ArrayList<>();
@@ -59,8 +60,8 @@ public class VGG16FaceIdentifier extends FaceIdentifier {
             int Height = faceLocalizations.get(i).getValidHeight(image.size().height());
 
             // Crop face, Resize and convert into INDArr
-            opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
-            resize(crop_image, crop_image, new opencv_core.Size(VGG16_INPUT_WIDTH, VGG16_INPUT_HEIGHT));
+            Mat crop_image = new Mat(image, new Rect(X, Y, Width, Height));
+            resize(crop_image, crop_image, new Size(VGG16_INPUT_WIDTH, VGG16_INPUT_HEIGHT));
             INDArray _image = nativeImageLoader.asMatrix(crop_image);
 
             // initiate vgg16 pre-processing

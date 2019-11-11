@@ -1,8 +1,9 @@
 package com.skymindglobal.faceverification_training.identification.VGG16FaceIdentifier;
 
 import com.skymindglobal.faceverification.detection.OpenIMAJ_FKEFaceDetector;
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Java2DFrameUtils;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -11,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class FaceAlignDatasetPreperation {
 //    private static String lfwSource = "D:\\Public_Data\\lfw\\lfw";
@@ -93,17 +94,17 @@ public class FaceAlignDatasetPreperation {
 
     public static void detectFacesAndSave(String source, String target) throws IOException {
         OpenIMAJ_FKEFaceDetector _OpenIMAJ_FKEFaceDetector = new OpenIMAJ_FKEFaceDetector(0.6);
-        opencv_core.Mat image = imread(source);
+        Mat image = imread(source);
 
         // detect faces
-        resize(image, image, new opencv_core.Size(OPENCV_DL_FACEDETECTOR_WIDTH, OPENCV_DL_FACEDETECTOR_HEIGHT));
+        resize(image, image, new Size(OPENCV_DL_FACEDETECTOR_WIDTH, OPENCV_DL_FACEDETECTOR_HEIGHT));
         _OpenIMAJ_FKEFaceDetector.detectFaces(image);
         List<BufferedImage> facePatches = _OpenIMAJ_FKEFaceDetector.getAlignedFacePatches();
 
         for (BufferedImage i : facePatches) {
             if(i.getWidth()>0 && i.getHeight()>0){
-                opencv_core.Mat crop_image = new opencv_core.Mat(Java2DFrameUtils.toMat(i));
-                resize(crop_image, crop_image, new opencv_core.Size(OUTPUT_IMAGE_WIDTH, OUTPUT_IMAGE_HEIGHT));
+                Mat crop_image = new Mat(Java2DFrameUtils.toMat(i));
+                resize(crop_image, crop_image, new Size(OUTPUT_IMAGE_WIDTH, OUTPUT_IMAGE_HEIGHT));
                 File targetFile = new File(target);
                 targetFile.getParentFile().mkdirs();
                 ImageIO.write(Java2DFrameUtils.toBufferedImage(crop_image), "jpg", targetFile);

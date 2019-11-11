@@ -30,6 +30,8 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.nd4j.linalg.api.buffer.DataType.HALF;
+
 /**
  * build a classifier using pretrained VGG16.VGGFACE (transfer learning).
  * input: image (cropped face with size 224x224)
@@ -52,7 +54,7 @@ public class VGG16Classifier {
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + key;
 
     public static void main(String[] args) throws Exception {
-        DataTypeUtil.setDTypeForContext(DataBuffer.Type.HALF);
+        DataTypeUtil.setDTypeForContext(HALF);
 
         ComputationGraph model;
         // Directory for Custom train and test datasets

@@ -3,8 +3,10 @@ package com.skymindglobal.faceverification_training.identification.feature.FaceN
 import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.detection.OpenCV_DeepLearningFaceDetector;
 import org.apache.commons.io.FileUtils;
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Java2DFrameUtils;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -13,8 +15,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class LFWFaceDatasetPreperation {
     private static String lfwSource = "D:\\Public_Data\\lfw";
@@ -94,10 +96,10 @@ public class LFWFaceDatasetPreperation {
 
     public static void detectFacesAndSave(String source, String target) throws IOException {
         OpenCV_DeepLearningFaceDetector _OpenCVDeepLearningFaceDetector = new OpenCV_DeepLearningFaceDetector(300, 300, 0.8);
-        opencv_core.Mat image = imread(source);
+        Mat image = imread(source);
 
         // detect faces
-        resize(image, image, new opencv_core.Size(OPENCV_DL_FACEDETECTOR_WIDTH, OPENCV_DL_FACEDETECTOR_HEIGHT));
+        resize(image, image, new Size(OPENCV_DL_FACEDETECTOR_WIDTH, OPENCV_DL_FACEDETECTOR_HEIGHT));
         _OpenCVDeepLearningFaceDetector.detectFaces(image);
         List<FaceLocalization> faceLocalizations = _OpenCVDeepLearningFaceDetector.getFaceLocalization();
 
@@ -109,8 +111,8 @@ public class LFWFaceDatasetPreperation {
 
             log.info(X+", "+ Y+", "+Width+", "+Height);
             if(Width>0 && Height>0){
-                opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
-                resize(crop_image, crop_image, new opencv_core.Size(OUTPUT_IMAGE_WIDTH, OUTPUT_IMAGE_HEIGHT));
+                Mat crop_image = new Mat(image, new Rect(X, Y, Width, Height));
+                resize(crop_image, crop_image, new Size(OUTPUT_IMAGE_WIDTH, OUTPUT_IMAGE_HEIGHT));
 
                 File targetFile = new File(target);
                 targetFile.getParentFile().mkdirs();

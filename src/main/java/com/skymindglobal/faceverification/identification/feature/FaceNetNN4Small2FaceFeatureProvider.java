@@ -2,7 +2,8 @@ package com.skymindglobal.faceverification.identification.feature;
 
 import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.identification.Prediction;
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
 import org.datavec.image.loader.NativeImageLoader;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 import static org.nd4j.linalg.ops.transforms.Transforms.euclideanDistance;
 
 public class FaceNetNN4Small2FaceFeatureProvider extends FaceFeatureProvider {
@@ -63,9 +64,9 @@ public class FaceNetNN4Small2FaceFeatureProvider extends FaceFeatureProvider {
         return model.feedForward(arr, false).get("embeddings");
     }
 
-    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold) throws IOException {
+    public List<Prediction> predict(Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold) throws IOException {
         NativeImageLoader nativeImageLoader = new NativeImageLoader();
-        resize(image, image, new opencv_core.Size(FaceNetNN4Small2_WIDTH, FaceNetNN4Small2_HEIGHT));
+        resize(image, image, new Size(FaceNetNN4Small2_WIDTH, FaceNetNN4Small2_HEIGHT));
         INDArray _image = nativeImageLoader.asMatrix(image);
         INDArray anchor = getEmbeddings(_image);
         List<Prediction> predicted = new ArrayList<>();

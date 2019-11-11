@@ -2,7 +2,8 @@ package com.skymindglobal.faceverification.identification.feature;
 
 import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.identification.Prediction;
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
 import org.datavec.image.loader.NativeImageLoader;
@@ -23,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 import static org.nd4j.linalg.ops.transforms.Transforms.cosineSim;
 
 public class VGG16FeatureProvider extends FaceFeatureProvider {
@@ -82,9 +83,9 @@ public class VGG16FeatureProvider extends FaceFeatureProvider {
                 .mapToInt(i -> tempArray[tempArray.length - i]);
     }
 
-    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples) throws IOException {
+    public List<Prediction> predict(Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples) throws IOException {
         NativeImageLoader nativeImageLoader = new NativeImageLoader();
-        resize(image, image, new opencv_core.Size(224, 224));
+        resize(image, image, new Size(224, 224));
         INDArray _image = nativeImageLoader.asMatrix(image);
         INDArray anchor = getEmbeddings(_image);
         List<Prediction> predicted = new ArrayList<>();

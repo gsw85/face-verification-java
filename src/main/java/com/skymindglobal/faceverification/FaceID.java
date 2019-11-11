@@ -5,13 +5,18 @@ import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.detection.OpenCV_DeepLearningFaceDetector;
 import com.skymindglobal.faceverification.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.faceverification.identification.*;
-import com.skymindglobal.faceverification.identification.feature.FaceNetFeatureProvider;
+import com.skymindglobal.faceverification.identification.feature.FaceNetNN4Small2FaceFeatureProvider;
+import com.skymindglobal.faceverification.identification.feature.KerasFaceNetFeatureProvider;
 import com.skymindglobal.faceverification.identification.feature.VGG16FeatureProvider;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
 import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
 import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 import org.nd4j.linalg.io.ClassPathResource;
@@ -20,11 +25,10 @@ import org.openimaj.image.processing.face.detection.keypoints.FacialKeypoint;
 import java.io.IOException;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.FONT_HERSHEY_PLAIN;
-import static org.bytedeco.javacpp.opencv_core.Point;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
-import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_HEIGHT;
-import static org.bytedeco.javacpp.opencv_videoio.CAP_PROP_FRAME_WIDTH;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_FRAME_HEIGHT;
+import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_FRAME_WIDTH;
+
 
 public class FaceID {
     private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
@@ -72,7 +76,8 @@ public class FaceID {
                 List<List<Prediction>> faceIdentities = FaceIdentifier.identify(faceLocalizations, cloneCopy);
                 labelIndividual(faceIdentities, image);
 
-                mainframe.showImage(converter.convert(image));
+                Frame temp = converter.convert(image);
+                mainframe.showImage(temp);
 
                 try {
                     Thread.sleep(40); //50
@@ -90,31 +95,35 @@ public class FaceID {
                 putText(
                         image,
                         i.get(j).toString(),
-                        new opencv_core.Point(
+                        new Point(
                                 (int)i.get(j).getFaceLocalization().getLeft_x(),
                                 (int)i.get(j).getFaceLocalization().getLeft_y() + j*13
                         ),
                         FONT_HERSHEY_PLAIN,
                         0.7,
-                        opencv_core.Scalar.YELLOW
+                        Scalar.YELLOW
                 );
             }
         }
 
     }
 
-    private static FaceIdentifier getFaceIdentifier(String faceIdentifier) throws IOException, ClassNotFoundException {
+    private static FaceIdentifier getFaceIdentifier(String faceIdentifier) throws IOException, ClassNotFoundException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         switch (faceIdentifier) {
             case FaceIdentifier.CUSTOM_VGG16:
                 return new VGG16FaceIdentifier(3);
             case FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT:
                 return new DistanceFaceIdentifier(
                         new VGG16FeatureProvider(),
-                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.78, 3);
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.3, 3);
             case FaceIdentifier.FEATURE_DISTANCE_FACENET_PREBUILT:
                 return new DistanceFaceIdentifier(
-                        new FaceNetFeatureProvider(),
-                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.75, 3);
+                        new FaceNetNN4Small2FaceFeatureProvider(),
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.3, 3);
+            case FaceIdentifier.FEATURE_DISTANCE_KERAS_FACENET_PREBUILT:
+                return new DistanceFaceIdentifier(
+                        new KerasFaceNetFeatureProvider(),
+                        new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.3, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:
@@ -135,7 +144,7 @@ public class FaceID {
 
     private static void annotateFaces(List<FaceLocalization> faceLocalizations, Mat image) {
         for (FaceLocalization i : faceLocalizations){
-            rectangle(image,new opencv_core.Rect(new opencv_core.Point((int) i.getLeft_x(),(int) i.getLeft_y()), new opencv_core.Point((int) i.getRight_x(),(int) i.getRight_y())), new opencv_core.Scalar(255, 0, 0, 0));
+            rectangle(image,new Rect(new Point((int) i.getLeft_x(),(int) i.getLeft_y()), new Point((int) i.getRight_x(),(int) i.getRight_y())), new Scalar(255, 0, 0, 0));
 
             if(i.getKeyPoints() != null){
                 for (FacialKeypoint x : i.getKeyPoints()){
@@ -146,7 +155,7 @@ public class FaceID {
                                     (int)(x.position.y+i.getLeft_y())
                             ),
                             2,
-                            new opencv_core.Scalar(255, 0, 0, 0),
+                            new Scalar(255, 0, 0, 0),
                             1,
                             8,
                             0

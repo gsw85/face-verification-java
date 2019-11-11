@@ -1,7 +1,7 @@
 package com.skymindglobal.faceverification.detection;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Java2DFrameUtils;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.openimaj.image.FImage;
 import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.processing.face.alignment.AffineAligner;
@@ -22,7 +22,7 @@ public class OpenIMAJ_FKEFaceDetector extends FaceDetector {
     }
 
     @Override
-    public void detectFaces(opencv_core.Mat image) {
+    public void detectFaces(Mat image) {
         frame = Java2DFrameUtils.toBufferedImage(image);
         FImage img = ImageUtilities.createFImage(frame);
         FKEFaceDetector detector = new FKEFaceDetector();

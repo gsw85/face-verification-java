@@ -2,7 +2,8 @@ package com.skymindglobal.faceverification.identification;
 
 import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.identification.feature.FaceFeatureProvider;
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ public class DistanceFaceIdentifier extends FaceIdentifier {
     }
 
     @Override
-    public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, opencv_core.Mat image) throws IOException {
+    public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, Mat image) throws IOException {
         List<List<Prediction>> collection = new ArrayList<>();
         for (int i = 0; i<faceLocalizations.size(); i++) {
 
@@ -36,7 +37,7 @@ public class DistanceFaceIdentifier extends FaceIdentifier {
             int Height = faceLocalizations.get(i).getValidHeight(image.size().height());
 
             // Crop face, Resize and convert into INDArr
-            opencv_core.Mat crop_image = new opencv_core.Mat(image, new opencv_core.Rect(X, Y, Width, Height));
+            Mat crop_image = new Mat(image, new Rect(X, Y, Width, Height));
 
             // predicts
             List<Prediction> predictions = _FaceFeatureProvider.predict(

@@ -1,6 +1,6 @@
 package com.skymindglobal.faceverification.detection;
 
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ interface IFaceDetector {
     int getImage_height();
     void setDetectionThreshold(double threshold);
     double getDetection_threshold();
-    void detectFaces(opencv_core.Mat image);
+    void detectFaces(Mat image);
     List<FaceLocalization> getFaceLocalization();
 }
 

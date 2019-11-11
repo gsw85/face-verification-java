@@ -6,21 +6,23 @@ import com.skymindglobal.faceverification.detection.OpenCV_DeepLearningFaceDetec
 import com.skymindglobal.faceverification.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.faceverification.identification.*;
 import com.skymindglobal.faceverification.identification.feature.VGG16FeatureProvider;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import org.nd4j.linalg.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.putText;
-import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
+import static org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_PLAIN;
+import static org.bytedeco.opencv.global.opencv_imgproc.putText;
+import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
 
 public class FaceIDVideo {
     private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
@@ -52,7 +54,7 @@ public class FaceIDVideo {
         while (true) {
             while (mainframe.isVisible()) {
                 Frame frame = grabber.grabImage();
-                opencv_core.Mat image = converter.convert(frame);
+                Mat image = converter.convert(frame);
 
                 Mat cloneCopy = new Mat();
 

@@ -1,24 +1,26 @@
 package com.skymindglobal.faceverification.detection;
 
 import org.bytedeco.javacpp.indexer.FloatIndexer;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_dnn;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.opencv.opencv_dnn.Net;
 import org.nd4j.linalg.io.ClassPathResource;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bytedeco.javacpp.opencv_core.CV_32F;
-import static org.bytedeco.javacpp.opencv_dnn.blobFromImage;
-import static org.bytedeco.javacpp.opencv_dnn.readNetFromCaffe;
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
+import static org.bytedeco.opencv.global.opencv_core.CV_32F;
+import static org.bytedeco.opencv.global.opencv_dnn.blobFromImage;
+import static org.bytedeco.opencv.global.opencv_dnn.readNetFromCaffe;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
 
-    private opencv_dnn.Net model;
+    private Net model;
     private int margin_percent = 0;
-    private opencv_core.Mat detectedFaces;
+    private Mat detectedFaces;
     private int inputImageHeight;
     private int inputImageWidth;
 
@@ -42,18 +44,18 @@ public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
     }
 
     @Override
-    public void detectFaces(opencv_core.Mat image) {
+    public void detectFaces(Mat image) {
         inputImageHeight = image.size().height();
         inputImageWidth = image.size().width();
 
         // resize the image to match the input size of the model
-        resize(image, image, new opencv_core.Size(this.getImage_width(), this.getImage_height()));
+        resize(image, image, new Size(this.getImage_width(), this.getImage_height()));
 
         // create a 4-dimensional blob from image with NCHW (Number of images in the batch -for face_train only-, Channel, Height, Width) dimensions order,
         // for more detailes read the official docs at https://docs.opencv.org/trunk/d6/d0f/group__dnn.html#gabd0e76da3c6ad15c08b01ef21ad55dd8
-        opencv_core.Mat blob = blobFromImage(image, 1.0,
-                new opencv_core.Size(this.getImage_width(), this.getImage_height()),
-                new opencv_core.Scalar(104.0, 177.0, 123.0, 0), false, false, CV_32F);
+        Mat blob = blobFromImage(image, 1.0,
+                new Size(this.getImage_width(), this.getImage_height()),
+                new Scalar(104.0, 177.0, 123.0, 0), false, false, CV_32F);
 
         // set the input to network model
         model.setInput(blob);
@@ -64,7 +66,7 @@ public class OpenCV_DeepLearningFaceDetector extends FaceDetector {
     @Override
     public List<FaceLocalization> getFaceLocalization() {
         // extract a 2d matrix for 4d output matrix with form of (number of detections x 7)
-        opencv_core.Mat ne = new opencv_core.Mat(new opencv_core.Size(detectedFaces.size(3), detectedFaces.size(2)), CV_32F, detectedFaces.ptr(0, 0));
+        Mat ne = new Mat(new Size(detectedFaces.size(3), detectedFaces.size(2)), CV_32F, detectedFaces.ptr(0, 0));
         // create indexer to access elements of the matric
         FloatIndexer srcIndexer = ne.createIndexer();
         List<FaceLocalization> faceLocalizations = new ArrayList();

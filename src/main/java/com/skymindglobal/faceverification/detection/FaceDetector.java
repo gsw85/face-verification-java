@@ -1,18 +1,14 @@
 package com.skymindglobal.faceverification.detection;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_dnn;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_dnn.Net;
 
 import java.util.List;
-
-import static org.bytedeco.javacpp.opencv_dnn.blobFromImage;
-import static org.bytedeco.javacpp.opencv_dnn.readNetFromCaffe;
-import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class FaceDetector implements IFaceDetector {
     public static final String OPENCV_DL_FACEDETECTOR = "OPENCV_DL_FACEDETECTOR";
     public static final String OPENIMAJ_FKE_FACEDETECTOR = "OPENIMAJ_FKE_FACEDETECTOR";
-    private opencv_dnn.Net model;
+    private Net model;
     private int image_width;
     private int image_height;
     private double detection_threshold;
@@ -51,7 +47,7 @@ public class FaceDetector implements IFaceDetector {
     }
 
     @Override
-    public void detectFaces(opencv_core.Mat image) {
+    public void detectFaces(Mat image) {
 
     }
 

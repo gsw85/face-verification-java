@@ -2,7 +2,7 @@ package com.skymindglobal.faceverification.identification.feature;
 
 import com.skymindglobal.faceverification.detection.FaceLocalization;
 import com.skymindglobal.faceverification.identification.Prediction;
-import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
@@ -23,7 +23,7 @@ public class FaceFeatureProvider implements IFaceFeatureProvider {
         return null;
     }
 
-    public List<Prediction> predict(opencv_core.Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples) throws IOException {
+    public List<Prediction> predict(Mat image, FaceLocalization faceLocalization, int numPredictions, double threshold, int numSamples) throws IOException {
         return null;
     }
 
