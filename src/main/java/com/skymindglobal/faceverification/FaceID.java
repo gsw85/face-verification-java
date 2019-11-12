@@ -37,7 +37,7 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.faceverification.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_VGG16_PREBUILT);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_KERAS_FACENET_PREBUILT);
 
         VideoCapture capture = new VideoCapture();
         capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);

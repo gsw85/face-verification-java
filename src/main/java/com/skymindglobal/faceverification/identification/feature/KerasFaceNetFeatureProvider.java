@@ -38,7 +38,9 @@ public class KerasFaceNetFeatureProvider extends FaceFeatureProvider {
     private static ArrayList<LabelFeaturePair> labelFeaturePairList = new ArrayList<>();
 
     public KerasFaceNetFeatureProvider() throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
-        String simpleMlp = new ClassPathResource("keras/facenet/facenet_keras_weights.h5").getFile().getPath();
+//        String simpleMlp = new ClassPathResource("keras/facenet/facenet_keras_weights.h5").getFile().getPath();
+        String simpleMlp = new ClassPathResource("keras/facenet/facenet_keras.h5").getFile().getPath();
+
         model = KerasModelImport.importKerasModelAndWeights(simpleMlp);
     }
 
