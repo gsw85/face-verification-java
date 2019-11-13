@@ -35,13 +35,13 @@ import java.util.List;
  * input: embeddings
  * output: class
  */
-public class FaceNetEmbeddingClassifier {
+public class CustomDatasetClassifier {
 
     private static String key = "facenet_embedding_classifier";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/" + key + ".zip";
     private static String embeddingFilename = new File(".").getAbsolutePath() + "/generated-models/FaceNetNN4Small2_embedding.zip";
 
-    private static final Logger log = LoggerFactory.getLogger(FaceNetEmbeddingClassifier.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomDatasetClassifier.class);
     private static boolean TRAINING_MODE = true;
     private static ComputationGraph snipped;
     private static int modelCheckpointInterval = 1;

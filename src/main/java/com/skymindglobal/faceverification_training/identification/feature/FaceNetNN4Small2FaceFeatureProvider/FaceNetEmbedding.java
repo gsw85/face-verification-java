@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /*
- * train a FaceNetNN4Small2 using LFW dataset, last layer to be used as feature for FaceNetEmbeddingClassifier.
+ * train a FaceNetNN4Small2 using LFW dataset, last layer to be used as feature for CustomDatasetClassifier.
  * input: image
  * output: class (main purpose of this network: the last hidden layer as feature)
  */
@@ -74,7 +74,18 @@ public class FaceNetEmbedding {
         }
         else
         {
-            ComputationGraph net = getFaceNetNN4Small2();
+            ComputationGraph net = new FaceNetNN4Small2(
+                    seed,
+                    inputShape,
+                    outputNum,
+                    updater,
+                    transferFunction,
+                    cacheMode,
+                    workspaceMode,
+                    algoMode,
+                    embeddingSize
+            ).init();
+
             System.out.println(net.summary());
             trainModel(iter, net);
         }
@@ -109,20 +120,5 @@ public class FaceNetEmbedding {
             log.info("*** Completed epoch {} ***", i);
         }
     }
-
-    private static ComputationGraph getFaceNetNN4Small2() {
-        return new FaceNetNN4Small2(
-                seed,
-                inputShape,
-                outputNum,
-                updater,
-                transferFunction,
-                cacheMode,
-                workspaceMode,
-                algoMode,
-                embeddingSize
-        ).init();
-    }
-
 
 }

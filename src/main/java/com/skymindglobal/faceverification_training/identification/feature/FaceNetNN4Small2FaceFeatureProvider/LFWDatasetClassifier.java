@@ -35,13 +35,13 @@ import java.util.List;
  * input: embeddings
  * output: class
  */
-public class LFWClassifier {
+public class LFWDatasetClassifier {
 
     private static String project = "lfw_classifier";
     private static String modelFilename = new File(".").getAbsolutePath() + "/generated-models/"+project+".zip";
     private static String embeddingFilename = new File(".").getAbsolutePath() + "/generated-models/facenet_embedding.zip";
 
-    private static final Logger log = LoggerFactory.getLogger(LFWClassifier.class);
+    private static final Logger log = LoggerFactory.getLogger(LFWDatasetClassifier.class);
     private static boolean TRAINING_MODE = true;
     private static ComputationGraph snipped;
     private static int modelCheckpointInterval = 20;
