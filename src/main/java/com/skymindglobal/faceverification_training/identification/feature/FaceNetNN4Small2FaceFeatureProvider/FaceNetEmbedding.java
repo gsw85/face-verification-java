@@ -2,6 +2,7 @@ package com.skymindglobal.faceverification_training.identification.feature.FaceN
 
 import org.datavec.image.loader.LFWLoader;
 import org.deeplearning4j.api.storage.StatsStorage;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.LFWDataSetIterator;
 import org.deeplearning4j.nn.conf.*;
 import org.deeplearning4j.nn.conf.layers.*;
@@ -10,6 +11,7 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.stats.StatsListener;
 import org.deeplearning4j.ui.storage.FileStatsStorage;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.model.FaceNetNN4Small2;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -39,8 +41,11 @@ public class FaceNetEmbedding {
 
     private static int seed = 123;
     private static int[] inputShape = new int[] {3, 96, 96};
-    private static int outputNum = LFWLoader.NUM_LABELS;
-    private static IUpdater updater = new Adam(0.1D, 0.9D, 0.999D, 0.01D);
+//    private static int outputNum = LFWLoader.NUM_LABELS;
+    private static int outputNum = 158;
+//    private static IUpdater updater = new Adam(0.1D, 0.9D, 0.999D, 0.01D);
+    private static IUpdater updater = new Adam(0.001D, 0.9D, 0.999D, 0.01D);
+
     private static Activation transferFunction = Activation.RELU;
     private static int embeddingSize = 128;
     private static CacheMode cacheMode = CacheMode.NONE;
@@ -55,16 +60,25 @@ public class FaceNetEmbedding {
 
         log.info(modelFilename);
         int[] inputWHC = new int[]{inputShape[2], inputShape[1], inputShape[0]};
-        LFWDataSetIterator iter = new LFWDataSetIterator(
-                batchSize,
-                numExamples,
-                inputWHC,
-                outputNum,
-                false,
-                true,
-                splitTrainTest,
-                new Random(seed)
+//        This uses original LFWDatasetIterator and LFWLoader
+//        LFWDataSetIterator iter = new LFWDataSetIterator(
+//                batchSize,
+//                numExamples,
+//                inputWHC,
+//                outputNum,
+//                false,
+//                true,
+//                splitTrainTest,
+//                new Random(seed)
+//        );
+        LFWDatasetIterator _LFWDatasetIterator = new LFWDatasetIterator(
+                new File("C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped"),
+                new File("C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped"),
+//                128,
+                32,
+                349
         );
+        RecordReaderDataSetIterator iter = _LFWDatasetIterator.trainIterator();
 
         if (new File(modelFilename).exists() && TRAINING_MODE) {
             log.info("Load model...");
@@ -93,11 +107,16 @@ public class FaceNetEmbedding {
         log.info("Execution completed.");
     }
 
-    private static void trainModel(LFWDataSetIterator iter, ComputationGraph net) throws IOException {
+//    private static void trainModel(LFWDataSetIterator iter, ComputationGraph net) throws IOException {
+//    private static void trainModel(LFWDatasetIterator iter, ComputationGraph net) throws IOException {
+        private static void trainModel(RecordReaderDataSetIterator iter, ComputationGraph net) throws IOException {
 
-        UIServer server = UIServer.getInstance();
-        StatsStorage storage = new FileStatsStorage(
-                new File(trainingUIStoragePath)
+
+
+            UIServer server = UIServer.getInstance();
+        StatsStorage storage = new InMemoryStatsStorage(
+//                new File(trainingUIStoragePath)
+
         );
 
         server.attach(storage);

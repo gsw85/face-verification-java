@@ -19,11 +19,11 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class LFWFaceDatasetPreperation {
-    private static String lfwSource = "D:\\Public_Data\\lfw";
-    private static String imageSourceTrain = "D:\\Public_Data\\lfw\\lfw_train";
-    private static String imageSourceTest = "D:\\Public_Data\\lfw\\lfw_test";
-    private static String imageSourceTrainCropped = "D:\\Public_Data\\lfw\\lfw_train_cropped";
-    private static String imageSourceTestCropped = "D:\\Public_Data\\lfw\\lfw_test_cropped";
+    private static String lfwSource = "C:\\Users\\choowilson\\lfw-wilson\\lfw";
+    private static String imageSourceTrain = "C:\\Users\\choowilson\\lfw-wilson\\lfw_train";
+    private static String imageSourceTest = "C:\\Users\\choowilson\\lfw-wilson\\lfw_test";
+    private static String imageSourceTrainCropped = "C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped";
+    private static String imageSourceTestCropped = "C:\\Users\\choowilson\\lfw-wilson\\lfw_test_cropped";
     private static int seed = 123;
     private static int trainPerc = 100;
     private static int minSamples = 10;
