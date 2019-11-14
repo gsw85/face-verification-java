@@ -18,6 +18,7 @@ import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.IUpdater;
+import org.nd4j.linalg.learning.config.Nesterovs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,16 +42,21 @@ public class FaceNetEmbedding {
 
     private static int seed = 123;
     private static int[] inputShape = new int[] {3, 96, 96};
-//    private static int outputNum = LFWLoader.NUM_LABELS;
-    private static int outputNum = 158;
-//    private static IUpdater updater = new Adam(0.1D, 0.9D, 0.999D, 0.01D);
-    private static IUpdater updater = new Adam(0.001D, 0.9D, 0.999D, 0.01D);
+    private static int outputNum = LFWLoader.NUM_LABELS;
+
+    //    private static int outputNum = 158;
+    private static IUpdater updater = new Adam(0.1D, 0.9D, 0.999D, 0.01D);
+//    private static IUpdater updater = new Nesterovs(0.1D, Nesterovs.DEFAULT_NESTEROV_MOMENTUM);
+
 
     private static Activation transferFunction = Activation.RELU;
+
     private static int embeddingSize = 128;
     private static CacheMode cacheMode = CacheMode.NONE;
     private static WorkspaceMode workspaceMode = WorkspaceMode.NONE;
     private static ConvolutionLayer.AlgoMode algoMode = ConvolutionLayer.AlgoMode.NO_WORKSPACE;
+//    private static ConvolutionLayer.AlgoMode algoMode = ConvolutionLayer.AlgoMode.PREFER_FASTEST;
+
     private static boolean TRAINING_MODE = true;
     private static int modelCheckpointInterval = 1;
     private static String trainingUIStoragePath = new File(".").getAbsolutePath() + "/.trainingUI/" + key;
@@ -61,24 +67,24 @@ public class FaceNetEmbedding {
         log.info(modelFilename);
         int[] inputWHC = new int[]{inputShape[2], inputShape[1], inputShape[0]};
 //        This uses original LFWDatasetIterator and LFWLoader
-//        LFWDataSetIterator iter = new LFWDataSetIterator(
-//                batchSize,
-//                numExamples,
-//                inputWHC,
-//                outputNum,
-//                false,
-//                true,
-//                splitTrainTest,
-//                new Random(seed)
-//        );
-        LFWDatasetIterator _LFWDatasetIterator = new LFWDatasetIterator(
-                new File("C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped"),
-                new File("C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped"),
-//                128,
-                32,
-                349
+        LFWDataSetIterator iter = new LFWDataSetIterator(
+                batchSize,
+                numExamples,
+                inputWHC,
+                outputNum,
+                false,
+                true,
+                splitTrainTest,
+                new Random(seed)
         );
-        RecordReaderDataSetIterator iter = _LFWDatasetIterator.trainIterator();
+//        LFWDatasetIterator _LFWDatasetIterator = new LFWDatasetIterator(
+//                new File("C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped"),
+//                new File("C:\\Users\\choowilson\\lfw-wilson\\lfw_train_cropped"),
+////                128,
+//                32,
+//                349
+//        );
+//        RecordReaderDataSetIterator iter = _LFWDatasetIterator.trainIterator();
 
         if (new File(modelFilename).exists() && TRAINING_MODE) {
             log.info("Load model...");
@@ -88,17 +94,20 @@ public class FaceNetEmbedding {
         }
         else
         {
-            ComputationGraph net = new FaceNetNN4Small2(
-                    seed,
-                    inputShape,
-                    outputNum,
-                    updater,
-                    transferFunction,
-                    cacheMode,
-                    workspaceMode,
-                    algoMode,
-                    embeddingSize
-            ).init();
+//            ComputationGraph net = new FaceNetNN4Small2(
+//                    seed,
+//                    inputShape,
+//                    outputNum,
+//                    updater,
+//                    transferFunction,
+//                    cacheMode,
+//                    WorkspaceMode.ENABLED,
+//                    algoMode,
+//                    embeddingSize
+//            ).init();
+            ComputationGraphConfiguration config= new RamokFaceNetSmallV2Model().conf();
+            ComputationGraph net = new ComputationGraph(config);
+            net.init();
 
             System.out.println(net.summary());
             trainModel(iter, net);
@@ -107,16 +116,14 @@ public class FaceNetEmbedding {
         log.info("Execution completed.");
     }
 
-//    private static void trainModel(LFWDataSetIterator iter, ComputationGraph net) throws IOException {
+    private static void trainModel(LFWDataSetIterator iter, ComputationGraph net) throws IOException {
+
 //    private static void trainModel(LFWDatasetIterator iter, ComputationGraph net) throws IOException {
-        private static void trainModel(RecordReaderDataSetIterator iter, ComputationGraph net) throws IOException {
-
-
+//        private static void trainModel(RecordReaderDataSetIterator iter, ComputationGraph net) throws IOException {
 
             UIServer server = UIServer.getInstance();
         StatsStorage storage = new InMemoryStatsStorage(
 //                new File(trainingUIStoragePath)
-
         );
 
         server.attach(storage);
