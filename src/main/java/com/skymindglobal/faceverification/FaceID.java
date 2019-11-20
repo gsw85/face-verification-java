@@ -7,11 +7,11 @@ import com.skymindglobal.faceverification.detection.OpenIMAJ_FKEFaceDetector;
 import com.skymindglobal.faceverification.identification.*;
 import com.skymindglobal.faceverification.identification.feature.FaceNetNN4Small2FaceFeatureProvider;
 import com.skymindglobal.faceverification.identification.feature.KerasFaceNetFeatureProvider;
+import com.skymindglobal.faceverification.identification.feature.RamokFaceNetFeatureProvider;
 import com.skymindglobal.faceverification.identification.feature.VGG16FeatureProvider;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
@@ -37,7 +37,8 @@ public class FaceID {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, CanvasFrame.Exception, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
         FaceDetector FaceDetector = getFaceDetector(com.skymindglobal.faceverification.detection.FaceDetector.OPENCV_DL_FACEDETECTOR);
-        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_KERAS_FACENET_PREBUILT);
+        FaceIdentifier FaceIdentifier = getFaceIdentifier(com.skymindglobal.faceverification.identification.FaceIdentifier.FEATURE_DISTANCE_RAMOK_FACENET_PREBUILT);
+
 
         VideoCapture capture = new VideoCapture();
         capture.set(CAP_PROP_FRAME_WIDTH, WIDTH);
@@ -124,6 +125,10 @@ public class FaceID {
                 return new DistanceFaceIdentifier(
                         new KerasFaceNetFeatureProvider(),
                         new ClassPathResource("vgg16_faces_224").getFile(), 1, 0.3, 3);
+            case FaceIdentifier.FEATURE_DISTANCE_RAMOK_FACENET_PREBUILT:
+                return new DistanceFaceIdentifier(
+                        new RamokFaceNetFeatureProvider(),
+                        new ClassPathResource("wilsonFaceDB").getFile(), 1, 0.3, 3);
             case FaceIdentifier.ZHZD:
                 return new AlexNetFaceIdentifier(5);
             default:

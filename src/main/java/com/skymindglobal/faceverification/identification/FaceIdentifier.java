@@ -11,6 +11,7 @@ public class FaceIdentifier implements IFaceIdentifier{
     public static final String FEATURE_DISTANCE_VGG16_PREBUILT = "FEATURE_DISTANCE_VGG16_PREBUILT";
     public static final String FEATURE_DISTANCE_FACENET_PREBUILT = "FEATURE_DISTANCE_FACENET_PREBUILT";
     public static final String FEATURE_DISTANCE_KERAS_FACENET_PREBUILT = "FEATURE_DISTANCE_KERAS_FACENET_PREBUILT";
+    public static final String FEATURE_DISTANCE_RAMOK_FACENET_PREBUILT = "FEATURE_DISTANCE_RAMOK_FACENET_PREBUILT";
     public static final String ZHZD = "ZHZD";
 
     public List<List<Prediction>> identify(List<FaceLocalization> faceLocalizations, Mat image) throws IOException {
